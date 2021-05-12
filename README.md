@@ -1,5 +1,5 @@
 # update
-Seedify Token on etheruem blockchain
+Seedify Token on Binance Smart Chain
 
 ## Pre-requisite
 
