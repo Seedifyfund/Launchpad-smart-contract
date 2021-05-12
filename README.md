@@ -1,5 +1,5 @@
 # update
-Seedify.fund Launcpad Smart Contract on Binance Smart Chain
+Seedify.fund Launchpad Smart Contract on Binance Smart Chain
 
 ## Pre-requisite
 
