@@ -1,5 +1,5 @@
 # update
-Seedify Token on Binance Smart Chain
+Seedify.fund Launcpad Smart Contract on Binance Smart Chain
 
 ## Pre-requisite
 
