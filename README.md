@@ -1,5 +1,5 @@
 # update
-Seedify Token on Binance blockchain
+Seedify.fund Launchpad Smart Contract on Binance Smart Chain
 
 ## Pre-requisite
 
