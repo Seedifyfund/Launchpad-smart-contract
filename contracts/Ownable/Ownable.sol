@@ -1,4 +1,5 @@
-pragma solidity >=0.4.25;
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.6.0;
 
 //OWnABLE contract that define owning functionality
 contract Ownable {
