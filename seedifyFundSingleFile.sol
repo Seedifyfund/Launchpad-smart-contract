@@ -93,8 +93,8 @@ contract SeedifyFundsContract is Ownable {
 
   //add the address in Whitelist tier One to invest
   function addWhitelistOne(address[] memory _address) external onlyOwner {
-      uint i;
-    for(i= 1; i<= _address.length ; i++){
+    uint i;
+    for(i = 1; i <= _address.length; i++){
     TierOne memory a = TierOne(_address);
     whitelistTierOne.push(a);
     }
@@ -102,8 +102,8 @@ contract SeedifyFundsContract is Ownable {
 
   //add the address in Whitelist tier two to invest
   function addWhitelistTwo(address[] memory _address) external onlyOwner {
-      uint i;
-    for(i= 1; i<= _address.length ; i++){
+    uint i;
+    for(i = 1; i <= _address.length; i++){
     TierTwo memory b = TierTwo(_address);
     whitelistTierTwo.push(b);
     }
@@ -111,8 +111,8 @@ contract SeedifyFundsContract is Ownable {
 
   //add the address in Whitelist tier three to invest
   function addWhitelistThree(address[] memory _address) external onlyOwner {
-      uint i;
-    for(i= 1; i<= _address.length ; i++){
+    uint i;
+    for(i = 1; i <= _address.length; i++){
     TierThree memory c = TierThree(_address);
     whitelistTierThree.push(c);
     }
