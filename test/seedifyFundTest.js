@@ -23,7 +23,7 @@ contract("SeedifyFund", async accounts => {
   it("Add and check the address in Whitelist tier One", async () => {
     const SeedifyInstance = await Seedify.deployed();
     const accounts = await web3.eth.getAccounts();
-    await SeedifyInstance.addWhitelistOne([accounts[0]]);
+    await SeedifyInstance.addWhitelistOne(accounts[0]);
     const result = await SeedifyInstance.getWhitelistOne(accounts[0]);
     assert(result != false);
 
@@ -35,7 +35,7 @@ contract("SeedifyFund", async accounts => {
   it("Add and check the address in Whitelist tier two", async () => {
     const SeedifyInstance = await Seedify.deployed();
     const accounts = await web3.eth.getAccounts();
-    await SeedifyInstance.addWhitelistOne([accounts[1]]);
+    await SeedifyInstance.addWhitelistOne(accounts[1]);
     const result = await SeedifyInstance.getWhitelistOne(accounts[1]);
     assert(result != false);
 
@@ -47,7 +47,7 @@ contract("SeedifyFund", async accounts => {
   it("Add and check the address in Whitelist tier three", async () => {
     const SeedifyInstance = await Seedify.deployed();
     const accounts = await web3.eth.getAccounts();
-    await SeedifyInstance.addWhitelistOne([accounts[2]]);
+    await SeedifyInstance.addWhitelistOne(accounts[2]);
     const result = await SeedifyInstance.getWhitelistOne(accounts[2]);
     assert(result != false);
 
@@ -62,7 +62,7 @@ contract('SeedifyFund', async accounts => {
     const value = 1;
     const accounts = await web3.eth.getAccounts();
 
-    await instance.addWhitelistOne([accounts[0]]);
+    await instance.addWhitelistOne(accounts[0]);
     let result = await web3.eth.sendTransaction({ from: accounts[0], to: instance.address, value: value });
     assert(result != false);
   })
@@ -76,7 +76,7 @@ contract('SeedifyFund', async accounts => {
     const value = 2;
     const accounts = await web3.eth.getAccounts();
 
-    await instance.addWhitelistTwo([accounts[0]]);
+    await instance.addWhitelistTwo(accounts[0]);
     let result = await web3.eth.sendTransaction({ from: accounts[0], to: instance.address, value: value });
     assert(result != false);
   })
@@ -90,7 +90,7 @@ contract('SeedifyFund', async accounts => {
     const value = 4;
     const accounts = await web3.eth.getAccounts();
 
-    await instance.addWhitelistThree([accounts[0]]);
+    await instance.addWhitelistThree(accounts[0]);
     let result = await web3.eth.sendTransaction({ from: accounts[0], to: instance.address, value: value });
     assert(result != false);
   })
