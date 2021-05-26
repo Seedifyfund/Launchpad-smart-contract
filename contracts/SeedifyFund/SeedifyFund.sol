@@ -25,9 +25,9 @@ contract SeedifyFundsContract is Ownable {
   uint public twoTier ; // value in bnb
   uint public threeTier;  // value in bnb
   // tiers Aarry length
-  uint public oneTierArrLength = 0;  // Aarry length of tier one
-  uint public twoTierArrLength = 0; // Aarry length of tier two
-  uint public threeTierArrLength = 0;  // Aarry length of tier three
+  uint public oneTierArrLength;  // Aarry length of tier one
+  uint public twoTierArrLength; // Aarry length of tier two
+  uint public threeTierArrLength;  // Aarry length of tier three
  
   // address array for tier one whitelist
   address[] private whitelistTierOne; 
