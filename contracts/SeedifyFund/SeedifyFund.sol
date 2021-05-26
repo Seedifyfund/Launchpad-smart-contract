@@ -149,13 +149,13 @@ contract SeedifyFundsContract is Ownable {
       sendValue(projectOwner, address(this).balance);
       
     } else if (msg.value > oneTier && msg.value <= twoTier) { // Greater than 1st and smaller/equal to 2nd tier bnb
-      require(getWhitelistTwo(msg.sender) == true);
+      require(getWhitelistTwo(msg.sender), 'This address is not whitelisted');
       require(totalBnbReceived + msg.value <= maxCap, "buyTokens: purchase would exceed max cap");
       totalBnbReceived += msg.value;
       sendValue(projectOwner, address(this).balance);
       
     } else if (msg.value > twoTier && msg.value <= threeTier) { // Greater than 2nd and smaller/equal to 3rd tier bnb
-      require(getWhitelistThree(msg.sender) == true);
+      require(getWhitelistThree(msg.sender), 'This address is not whitelisted');
       require(totalBnbReceived + msg.value <= maxCap, "buyTokens: purchase would exceed max cap");
       totalBnbReceived += msg.value;
       sendValue(projectOwner, address(this).balance);
