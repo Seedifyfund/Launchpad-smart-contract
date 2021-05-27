@@ -58,10 +58,6 @@ contract SeedifyFundsContract is Ownable {
   uint public oneTier;  // value in bnb
   uint public twoTier ; // value in bnb
   uint public threeTier;  // value in bnb
-  // tiers Aarry length
-  uint public oneTierArrLength;  // Aarry length of tier one
-  uint public twoTierArrLength; // Aarry length of tier two
-  uint public threeTierArrLength;  // Aarry length of tier three
  
   // address array for tier one whitelist
   address[] private whitelistTierOne; 
@@ -95,27 +91,25 @@ contract SeedifyFundsContract is Ownable {
   function addWhitelistOne(address _address) external onlyOwner {
     require(_address != address(0), "Invalid address");
     whitelistTierOne.push(_address);
-    oneTierArrLength += 1;
   }
 
   //add the address in Whitelist tier two to invest
   function addWhitelistTwo(address _address) external onlyOwner {
     require(_address != address(0), "Invalid address");
     whitelistTierTwo.push(_address);
-    twoTierArrLength += 1;
   }
 
   //add the address in Whitelist tier three to invest
   function addWhitelistThree(address _address) external onlyOwner {
     require(_address != address(0), "Invalid address");
     whitelistTierThree.push(_address);
-    threeTierArrLength += 1;
   }
 
   // check the address in whitelist tier one
   function getWhitelistOne(address _address) public view returns(bool) {
     uint i;
-    for (i = 0; i < oneTierArrLength; i++) {
+    uint length = whitelistTierOne.length;
+    for (i = 0; i < length; i++) {
       address _addressArr = whitelistTierOne[i];
       if (_addressArr == _address) {
         return true;
@@ -127,7 +121,8 @@ contract SeedifyFundsContract is Ownable {
   // check the address in whitelist tier two
   function getWhitelistTwo(address _address) public view returns(bool) {
     uint i;
-    for (i = 0; i < twoTierArrLength; i++) {
+    uint length = whitelistTierTwo.length;
+    for (i = 0; i < length; i++) {
       address _addressArr = whitelistTierTwo[i];
       if (_addressArr == _address) {
         return true;
@@ -139,7 +134,8 @@ contract SeedifyFundsContract is Ownable {
   // check the address in whitelist tier three
   function getWhitelistThree(address _address) public view returns(bool) {
     uint i;
-    for (i = 0; i < threeTierArrLength; i++) {
+    uint length = whitelistTierThree.length; 
+    for (i = 0; i < length; i++) {
       address _addressArr = whitelistTierThree[i];
       if (_addressArr == _address) {
         return true;
