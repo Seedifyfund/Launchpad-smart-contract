@@ -18,12 +18,27 @@ contract SeedifyFundsContract is Ownable {
   uint public immutable maxCap; // Max cap in BNB
   uint256 public immutable saleStartTime; // start sale time
   uint256 public immutable saleEndTime; // end sale time
-  uint256 public totalBnbReceived; // total bnd received
-  address payable public projectOwner;
-  // tiers limit
-  uint public oneTier;  // value in bnb
-  uint public twoTier ; // value in bnb
-  uint public threeTier;  // value in bnb
+  uint256 public totalBnbReceivedInAllTier; // total bnd received
+  uint256 public totalBnbInTierOne; // total bnb for tier one
+  uint256 public totalBnbInTierTwo; // total bnb for tier Tier
+  uint256 public totalBnbInTierThree; // total bnb for tier Three
+  uint public totalparticipants; // total participants in ido
+  address payable public projectOwner; // project Owner
+  
+  // max cap per tier
+  uint public tierOneMaxCap;
+  uint public tierTwoMaxCap;
+  uint public tierThreeMaxCap;
+  
+  //total users per tier
+  uint public totalUserInTierOne;
+  uint public totalUserInTierTwo;
+  uint public totalUserInTierThree;
+  
+  //max allocations per user in a tier
+  uint public maxAllocaPerUserTierOne;
+  uint public maxAllocaPerUserTierTwo; 
+  uint public maxAllocaPerUserTierThree;
  
   // address array for tier one whitelist
   address[] private whitelistTierOne; 
@@ -33,24 +48,51 @@ contract SeedifyFundsContract is Ownable {
   
   // address array for tier three whitelist
   address[] private whitelistTierThree; 
+  
 
+  //mapping the user purchase per tier
+  mapping(address => uint) public buyInOneTier;
+  mapping(address => uint) public buyInTwoTier;
+  mapping(address => uint) public buyInThreeTier;
 
   // CONSTRUCTOR  
-  constructor(uint _maxCap, uint256 _saleStartTime, uint256 _saleEndTime,uint _oneTier,uint _twoTier,uint _threeTier, address payable _projectOwner) public {
-    maxCap = _maxCap* 10 ** 18;
+  constructor(uint _maxCap, uint256 _saleStartTime, uint256 _saleEndTime, address payable _projectOwner, uint256 _tierOneValue, uint256 _tierTwoValue, uint256 _tierThreeValue, uint256 _tierOneUsersValue, uint256 _tierTwoUsersValue, uint256 _tierThreeUsersValue,uint _totalparticipants) public {
+    maxCap = _maxCap;
     saleStartTime = _saleStartTime;
     saleEndTime = _saleEndTime;
-    oneTier =_oneTier* 10 ** 18;
-    twoTier = _twoTier * 10 ** 18;
-    threeTier =_threeTier* 10 ** 18;
     projectOwner = _projectOwner;
+    tierOneMaxCap =_tierOneValue;
+    tierTwoMaxCap = _tierTwoValue;
+    tierThreeMaxCap =_tierThreeValue;
+    totalUserInTierOne =_tierOneUsersValue;
+    totalUserInTierTwo = _tierTwoUsersValue;
+    totalUserInTierThree =_tierThreeUsersValue;
+    maxAllocaPerUserTierOne = tierOneMaxCap / totalUserInTierOne;
+    maxAllocaPerUserTierTwo = tierTwoMaxCap / totalUserInTierTwo; 
+    maxAllocaPerUserTierThree = tierThreeMaxCap / totalUserInTierThree;
+    totalparticipants = _totalparticipants;
   }
 
   // function to update the tiers value manually
   function updateTierValues(uint256 _tierOneValue, uint256 _tierTwoValue, uint256 _tierThreeValue) external onlyOwner {
-    oneTier =_tierOneValue* 10 ** 18;
-    twoTier = _tierTwoValue * 10 ** 18;
-    threeTier =_tierThreeValue* 10 ** 18;
+    tierOneMaxCap =_tierOneValue;
+    tierTwoMaxCap = _tierTwoValue;
+    tierThreeMaxCap =_tierThreeValue;
+    
+    maxAllocaPerUserTierOne = tierOneMaxCap / totalUserInTierOne;
+    maxAllocaPerUserTierTwo = tierTwoMaxCap / totalUserInTierTwo; 
+    maxAllocaPerUserTierThree = tierThreeMaxCap / totalUserInTierThree;
+  }
+  
+  // function to update the tiers users value manually
+  function updateTierUsersValue(uint256 _tierOneUsersValue, uint256 _tierTwoUsersValue, uint256 _tierThreeUsersValue) external onlyOwner {
+    totalUserInTierOne =_tierOneUsersValue;
+    totalUserInTierTwo = _tierTwoUsersValue;
+    totalUserInTierThree =_tierThreeUsersValue;
+    
+    maxAllocaPerUserTierOne = tierOneMaxCap / totalUserInTierOne;
+    maxAllocaPerUserTierTwo = tierTwoMaxCap / totalUserInTierTwo; 
+    maxAllocaPerUserTierThree = tierThreeMaxCap / totalUserInTierThree;
   }
 
   //add the address in Whitelist tier One to invest
@@ -132,28 +174,35 @@ contract SeedifyFundsContract is Ownable {
         (bool success, ) = recipient.call{ value: amount }("");
         require(success, "Address: unable to send value, recipient may have reverted");
     }
-    
+ 
   // send bnb to the contract address
   receive() external payable {
      require(now >= saleStartTime, "The sale is not started yet "); // solhint-disable
      require(now <= saleEndTime, "The sale is closed"); // solhint-disable
+     require(totalBnbReceivedInAllTier + msg.value <= maxCap, "buyTokens: purchase would exceed max cap");
      
-    if (msg.value <= oneTier) { // smaller and Equal to 1st tier BNB 
-      require(getWhitelistOne(msg.sender), 'This address is not whitelisted');
-      require(totalBnbReceived + msg.value <= maxCap, "buyTokens: purchase would exceed max cap");
-      totalBnbReceived += msg.value;
+    if (getWhitelistOne(msg.sender)) { 
+      require(totalBnbInTierOne + msg.value <= tierOneMaxCap, "buyTokens: purchase would exceed Tier one max cap");
+      require(buyInOneTier[msg.sender] + msg.value <= maxAllocaPerUserTierOne ,"buyTokens:You are investing more than your tier-1 limit!");
+      buyInOneTier[msg.sender] += msg.value;
+      totalBnbReceivedInAllTier += msg.value;
+      totalBnbInTierOne += msg.value;
       sendValue(projectOwner, address(this).balance);
       
-    } else if (msg.value > oneTier && msg.value <= twoTier) { // Greater than 1st and smaller/equal to 2nd tier bnb
-      require(getWhitelistTwo(msg.sender), 'This address is not whitelisted');
-      require(totalBnbReceived + msg.value <= maxCap, "buyTokens: purchase would exceed max cap");
-      totalBnbReceived += msg.value;
+    } else if (getWhitelistTwo(msg.sender)) {
+      require(totalBnbInTierTwo + msg.value <= tierTwoMaxCap, "buyTokens: purchase would exceed Tier two max cap");
+      require(buyInTwoTier[msg.sender] + msg.value <= maxAllocaPerUserTierTwo ,"buyTokens:You are investing more than your tier-2 limit!");
+      buyInTwoTier[msg.sender] += msg.value;
+      totalBnbReceivedInAllTier += msg.value;
+      totalBnbInTierTwo += msg.value;
       sendValue(projectOwner, address(this).balance);
       
-    } else if (msg.value > twoTier && msg.value <= threeTier) { // Greater than 2nd and smaller/equal to 3rd tier bnb
-      require(getWhitelistThree(msg.sender), 'This address is not whitelisted');
-      require(totalBnbReceived + msg.value <= maxCap, "buyTokens: purchase would exceed max cap");
-      totalBnbReceived += msg.value;
+    } else if (getWhitelistThree(msg.sender)) { 
+      require(totalBnbInTierThree + msg.value <= tierThreeMaxCap, "buyTokens: purchase would exceed Tier three max cap");
+      require(buyInThreeTier[msg.sender] + msg.value <= maxAllocaPerUserTierThree ,"buyTokens:You are investing more than your tier-3 limit!");
+      buyInThreeTier[msg.sender] += msg.value;
+      totalBnbReceivedInAllTier += msg.value;
+      totalBnbInTierThree += msg.value;
       sendValue(projectOwner, address(this).balance);
       
     } else {
