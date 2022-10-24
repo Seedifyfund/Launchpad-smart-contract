@@ -3,7 +3,7 @@
  *Decentralized Incubator
  *A disruptive blockchain incubator program / decentralized seed stage fund, empowered through DAO based community-involvement mechanisms
  */
-pragma solidity ^0.6.0;
+pragma solidity ^0.8.17;
 
 // SPDX-License-Identifier: UNLICENSED
 
@@ -456,8 +456,8 @@ contract SeedifyFundsContract is Ownable {
 
     // send bnb to the contract address
     receive() external payable {
-        require(now >= saleStartTime, "The sale is not started yet "); // solhint-disable
-        require(now <= saleEndTime, "The sale is closed"); // solhint-disable
+        require(block.timestamp >= saleStartTime, "The sale is not started yet "); // solhint-disable
+        require(block.timestamp <= saleEndTime, "The sale is closed"); // solhint-disable
         require(
             totalBnbReceivedInAllTier + msg.value <= maxCap,
             "buyTokens: purchase would exceed max cap"

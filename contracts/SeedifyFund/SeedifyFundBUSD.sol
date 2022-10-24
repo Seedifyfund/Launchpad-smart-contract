@@ -1,9 +1,9 @@
 /*
-*Seedify.fund
-*Decentralized Incubator
-*A disruptive blockchain incubator program / decentralized seed stage fund, empowered through DAO based community-involvement mechanisms
-*/
-pragma solidity ^0.6.0;
+ *Seedify.fund
+ *Decentralized Incubator
+ *A disruptive blockchain incubator program / decentralized seed stage fund, empowered through DAO based community-involvement mechanisms
+ */
+pragma solidity ^0.8.17;
 
 // SPDX-License-Identifier: UNLICENSED
 
@@ -162,7 +162,7 @@ contract SeedifyFundsContract is Ownable {
         minAllocaPerUserTierSeven = 70000000000000;
         minAllocaPerUserTierEight = 80000000000000;
         minAllocaPerUserTierNine = 90000000000000;
-        
+
         totalUserInTierOne = 2;
         totalUserInTierTwo = 2;
         totalUserInTierThree = 2;
@@ -172,7 +172,7 @@ contract SeedifyFundsContract is Ownable {
         totalUserInTierSeven = 2;
         totalUserInTierEight = 2;
         totalUserInTierNine = 2;
-        
+
         maxAllocaPerUserTierOne = tierOneMaxCap / totalUserInTierOne;
         maxAllocaPerUserTierTwo = tierTwoMaxCap / totalUserInTierTwo;
         maxAllocaPerUserTierThree = tierThreeMaxCap / totalUserInTierThree;
@@ -438,8 +438,8 @@ contract SeedifyFundsContract is Ownable {
         _hasAllowance(msg.sender, amount)
         returns (bool)
     {
-        require(now >= saleStartTime, "The sale is not started yet "); // solhint-disable
-        require(now <= saleEndTime, "The sale is closed"); // solhint-disable
+        require(block.timestamp >= saleStartTime, "The sale is not started yet "); // solhint-disable
+        require(block.timestamp <= saleEndTime, "The sale is closed"); // solhint-disable
         require(
             totalBUSDReceivedInAllTier + amount <= maxCap,
             "buyTokens: purchase would exceed max cap"
