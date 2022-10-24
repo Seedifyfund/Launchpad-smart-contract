@@ -1,4 +1,5 @@
 pragma solidity ^0.6.0;
+import "./IERC20.sol";
 
 // SPDX-License-Identifier: UNLICENSED
 library SafeERC20 {
