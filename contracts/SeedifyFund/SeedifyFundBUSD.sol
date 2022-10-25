@@ -23,61 +23,21 @@ contract SeedifyFundsContract is Ownable {
     uint256 public immutable saleStartTime; // start sale time
     uint256 public immutable saleEndTime; // end sale time
     uint256 public totalBUSDReceivedInAllTier; // total bnd received
-    uint256 public totalBUSDInTierOne; // total BUSD for tier one
-    uint256 public totalBUSDInTierTwo; // total BUSD for tier Tier
-    uint256 public totalBUSDInTierThree; // total BUSD for tier Three
-    uint256 public totalBUSDInTierFour; // total BUSD for tier Four
-    uint256 public totalBUSDInTierFive; // total BUSD for tier Five
-    uint256 public totalBUSDInTierSix; // total BUSD for tier Six
-    uint256 public totalBUSDInTierSeven; // total BUSD for tier Seven
-    uint256 public totalBUSDInTierEight; // total BUSD for tier Eight
-    uint256 public totalBUSDInTierNine; // total BUSD for tier Nine
+    uint256[9] public totalBUSDInTiers; // total BUSD for tiers
     uint256 public totalparticipants; // total participants in ido
     address payable public projectOwner; // project Owner
 
     // max cap per tier
-    uint256 public tierOneMaxCap;
-    uint256 public tierTwoMaxCap;
-    uint256 public tierThreeMaxCap;
-    uint256 public tierFourMaxCap;
-    uint256 public tierFiveMaxCap;
-    uint256 public tierSixMaxCap;
-    uint256 public tierSevenMaxCap;
-    uint256 public tierEightMaxCap;
-    uint256 public tierNineMaxCap;
+    uint256[9] public tiersMaxCap;
 
     //total users per tier
-    uint256 public totalUserInTierOne;
-    uint256 public totalUserInTierTwo;
-    uint256 public totalUserInTierThree;
-    uint256 public totalUserInTierFour;
-    uint256 public totalUserInTierFive;
-    uint256 public totalUserInTierSix;
-    uint256 public totalUserInTierSeven;
-    uint256 public totalUserInTierEight;
-    uint256 public totalUserInTierNine;
+    uint256[9] public totalUserInTiers;
 
     //max allocations per user in a tier
-    uint256 public maxAllocaPerUserTierOne;
-    uint256 public maxAllocaPerUserTierTwo;
-    uint256 public maxAllocaPerUserTierThree;
-    uint256 public maxAllocaPerUserTierFour;
-    uint256 public maxAllocaPerUserTierFive;
-    uint256 public maxAllocaPerUserTierSix;
-    uint256 public maxAllocaPerUserTierSeven;
-    uint256 public maxAllocaPerUserTierEight;
-    uint256 public maxAllocaPerUserTierNine;
+    uint256[9] public maxAllocaPerUserInTiers;
 
     //min allocation per user in a tier
-    uint256 public minAllocaPerUserTierOne;
-    uint256 public minAllocaPerUserTierTwo;
-    uint256 public minAllocaPerUserTierThree;
-    uint256 public minAllocaPerUserTierFour;
-    uint256 public minAllocaPerUserTierFive;
-    uint256 public minAllocaPerUserTierSix;
-    uint256 public minAllocaPerUserTierSeven;
-    uint256 public minAllocaPerUserTierEight;
-    uint256 public minAllocaPerUserTierNine;
+    uint256[9] public minAllocaPerUserInTiers;
 
     // address array for tier one whitelist
     address[] private whitelistTierOne;
@@ -91,19 +51,19 @@ contract SeedifyFundsContract is Ownable {
     // address array for tier Four whitelist
     address[] private whitelistTierFour;
 
-    // address array for tier three whitelist
+    // address array for tier Five whitelist
     address[] private whitelistTierFive;
 
-    // address array for tier three whitelist
+    // address array for tier Six whitelist
     address[] private whitelistTierSix;
 
-    // address array for tier three whitelist
+    // address array for tier Seven whitelist
     address[] private whitelistTierSeven;
 
-    // address array for tier three whitelist
+    // address array for tier Eight whitelist
     address[] private whitelistTierEight;
 
-    // address array for tier three whitelist
+    // address array for tier Nine whitelist
     address[] private whitelistTierNine;
 
     IERC20 public ERC20Interface;
@@ -126,62 +86,43 @@ contract SeedifyFundsContract is Ownable {
         uint256 _saleStartTime,
         uint256 _saleEndTime,
         address payable _projectOwner,
-        uint256 _tierOneValue,
-        uint256 _tierTwoValue,
-        uint256 _tierThreeValue,
-        uint256 _tierFourValue,
-        uint256 _tierFiveValue,
-        uint256 _tierSixValue,
-        uint256 _tierSevenValue,
-        uint256 _tierEightValue,
-        uint256 _tierNineValue,
+        uint256[9] memory _tiersValue,
         uint256 _totalparticipants,
         address _tokenAddress
     ) public {
         maxCap = _maxCap;
         saleStartTime = _saleStartTime;
         saleEndTime = _saleEndTime;
-
         projectOwner = _projectOwner;
-        tierOneMaxCap = _tierOneValue;
-        tierTwoMaxCap = _tierTwoValue;
-        tierThreeMaxCap = _tierThreeValue;
-        tierFourMaxCap = _tierFourValue;
-        tierFiveMaxCap = _tierFiveValue;
-        tierSixMaxCap = _tierSixValue;
-        tierSevenMaxCap = _tierSevenValue;
-        tierEightMaxCap = _tierEightValue;
-        tierNineMaxCap = _tierNineValue;
 
-        minAllocaPerUserTierOne = 10000000000000;
-        minAllocaPerUserTierTwo = 20000000000000;
-        minAllocaPerUserTierThree = 30000000000000;
-        minAllocaPerUserTierFour = 40000000000000;
-        minAllocaPerUserTierFive = 50000000000000;
-        minAllocaPerUserTierSix = 60000000000000;
-        minAllocaPerUserTierSeven = 70000000000000;
-        minAllocaPerUserTierEight = 80000000000000;
-        minAllocaPerUserTierNine = 90000000000000;
+        for (uint256 i = 0; i < 9; i++) {
+            tiersMaxCap[i] = _tiersValue[i];
+        }
 
-        totalUserInTierOne = 2;
-        totalUserInTierTwo = 2;
-        totalUserInTierThree = 2;
-        totalUserInTierFour = 2;
-        totalUserInTierFive = 2;
-        totalUserInTierSix = 2;
-        totalUserInTierSeven = 2;
-        totalUserInTierEight = 2;
-        totalUserInTierNine = 2;
+        minAllocaPerUserInTiers[0] = 10000000000000;
+        minAllocaPerUserInTiers[1] = 20000000000000;
+        minAllocaPerUserInTiers[2] = 30000000000000;
+        minAllocaPerUserInTiers[3] = 40000000000000;
+        minAllocaPerUserInTiers[4] = 50000000000000;
+        minAllocaPerUserInTiers[5] = 60000000000000;
+        minAllocaPerUserInTiers[6] = 70000000000000;
+        minAllocaPerUserInTiers[7] = 80000000000000;
+        minAllocaPerUserInTiers[8] = 90000000000000;
 
-        maxAllocaPerUserTierOne = tierOneMaxCap / totalUserInTierOne;
-        maxAllocaPerUserTierTwo = tierTwoMaxCap / totalUserInTierTwo;
-        maxAllocaPerUserTierThree = tierThreeMaxCap / totalUserInTierThree;
-        maxAllocaPerUserTierFour = tierFourMaxCap / totalUserInTierFour;
-        maxAllocaPerUserTierFive = tierFiveMaxCap / totalUserInTierFive;
-        maxAllocaPerUserTierSix = tierSixMaxCap / totalUserInTierSix;
-        maxAllocaPerUserTierSeven = tierSevenMaxCap / totalUserInTierSeven;
-        maxAllocaPerUserTierEight = tierEightMaxCap / totalUserInTierEight;
-        maxAllocaPerUserTierNine = tierNineMaxCap / totalUserInTierNine;
+        totalUserInTiers[0] = 2;
+        totalUserInTiers[1] = 2;
+        totalUserInTiers[2] = 2;
+        totalUserInTiers[3] = 2;
+        totalUserInTiers[4] = 2;
+        totalUserInTiers[5] = 2;
+        totalUserInTiers[6] = 2;
+        totalUserInTiers[7] = 2;
+        totalUserInTiers[8] = 2;
+
+        for (uint256 i = 0; i < 9; i++) {
+            maxAllocaPerUserInTiers[i] = tiersMaxCap[i] / totalUserInTiers[i];
+        }
+
         totalparticipants = _totalparticipants;
         require(_tokenAddress != address(0), "Zero token address"); //Adding token to the contract
         tokenAddress = _tokenAddress;
@@ -189,235 +130,66 @@ contract SeedifyFundsContract is Ownable {
     }
 
     // function to update the tiers value manually
-    function updateTierValues(
-        uint256 _tierOneValue,
-        uint256 _tierTwoValue,
-        uint256 _tierThreeValue,
-        uint256 _tierFourValue,
-        uint256 _tierFiveValue,
-        uint256 _tierSixValue,
-        uint256 _tierSevenValue,
-        uint256 _tierEightValue,
-        uint256 _tierNineValue
-    ) external onlyOwner {
-        tierOneMaxCap = _tierOneValue;
-        tierTwoMaxCap = _tierTwoValue;
-        tierThreeMaxCap = _tierThreeValue;
-        tierFourMaxCap = _tierFourValue;
-        tierFiveMaxCap = _tierFiveValue;
-        tierSixMaxCap = _tierSixValue;
-        tierSevenMaxCap = _tierSevenValue;
-        tierEightMaxCap = _tierEightValue;
-        tierNineMaxCap = _tierNineValue;
-
-        maxAllocaPerUserTierOne = tierOneMaxCap / totalUserInTierOne;
-        maxAllocaPerUserTierTwo = tierTwoMaxCap / totalUserInTierTwo;
-        maxAllocaPerUserTierThree = tierThreeMaxCap / totalUserInTierThree;
-        maxAllocaPerUserTierFour = tierFourMaxCap / totalUserInTierFour;
-        maxAllocaPerUserTierFive = tierFiveMaxCap / totalUserInTierFive;
-        maxAllocaPerUserTierSix = tierSixMaxCap / totalUserInTierSix;
-        maxAllocaPerUserTierSeven = tierSevenMaxCap / totalUserInTierSeven;
-        maxAllocaPerUserTierEight = tierEightMaxCap / totalUserInTierEight;
-        maxAllocaPerUserTierNine = tierNineMaxCap / totalUserInTierNine;
+    function updateTierValues(uint256[9] memory _tiersValue)
+        external
+        onlyOwner
+    {
+        for (uint256 i = 0; i < 9; i++) {
+            tiersMaxCap[i] = _tiersValue[i];
+            maxAllocaPerUserInTiers[i] = tiersMaxCap[i] / totalUserInTiers[i];
+        }
     }
 
     // function to update the tiers users value manually
-    function updateTierUsersValue(
-        uint256 _tierOneUsersValue,
-        uint256 _tierTwoUsersValue,
-        uint256 _tierThreeUsersValue,
-        uint256 _tierFourUsersValue,
-        uint256 _tierFiveUsersValue,
-        uint256 _tierSixUsersValue,
-        uint256 _tierSevenUsersValue,
-        uint256 _tierEightUsersValue,
-        uint256 _tierNineUsersValue
-    ) external onlyOwner {
-        totalUserInTierOne = _tierOneUsersValue;
-        totalUserInTierTwo = _tierTwoUsersValue;
-        totalUserInTierThree = _tierThreeUsersValue;
-        totalUserInTierFour = _tierFourUsersValue;
-        totalUserInTierFive = _tierFiveUsersValue;
-        totalUserInTierSix = _tierSixUsersValue;
-        totalUserInTierSeven = _tierSevenUsersValue;
-        totalUserInTierEight = _tierEightUsersValue;
-        totalUserInTierNine = _tierNineUsersValue;
-
-        maxAllocaPerUserTierOne = tierOneMaxCap / totalUserInTierOne;
-        maxAllocaPerUserTierTwo = tierTwoMaxCap / totalUserInTierTwo;
-        maxAllocaPerUserTierThree = tierThreeMaxCap / totalUserInTierThree;
-        maxAllocaPerUserTierFour = tierFourMaxCap / totalUserInTierFour;
-        maxAllocaPerUserTierFive = tierFiveMaxCap / totalUserInTierFive;
-        maxAllocaPerUserTierSix = tierSixMaxCap / totalUserInTierSix;
-        maxAllocaPerUserTierSeven = tierSevenMaxCap / totalUserInTierSeven;
-        maxAllocaPerUserTierEight = tierEightMaxCap / totalUserInTierEight;
-        maxAllocaPerUserTierNine = tierNineMaxCap / totalUserInTierNine;
-    }
-
-    //add the address in Whitelist tier One to invest
-    function addWhitelistOne(address _address) external onlyOwner {
-        require(_address != address(0), "Invalid address");
-        whitelistTierOne.push(_address);
-    }
-
-    //add the address in Whitelist tier two to invest
-    function addWhitelistTwo(address _address) external onlyOwner {
-        require(_address != address(0), "Invalid address");
-        whitelistTierTwo.push(_address);
-    }
-
-    //add the address in Whitelist tier three to invest
-    function addWhitelistThree(address _address) external onlyOwner {
-        require(_address != address(0), "Invalid address");
-        whitelistTierThree.push(_address);
-    }
-
-    //add the address in Whitelist tier Four to invest
-    function addWhitelistFour(address _address) external onlyOwner {
-        require(_address != address(0), "Invalid address");
-        whitelistTierFour.push(_address);
-    }
-
-    //add the address in Whitelist tier three to invest
-    function addWhitelistFive(address _address) external onlyOwner {
-        require(_address != address(0), "Invalid address");
-        whitelistTierFive.push(_address);
-    }
-
-    //add the address in Whitelist tier three to invest
-    function addWhitelistSix(address _address) external onlyOwner {
-        require(_address != address(0), "Invalid address");
-        whitelistTierSix.push(_address);
-    }
-
-    //add the address in Whitelist tier three to invest
-    function addWhitelistSeven(address _address) external onlyOwner {
-        require(_address != address(0), "Invalid address");
-        whitelistTierSeven.push(_address);
-    }
-
-    //add the address in Whitelist tier three to invest
-    function addWhitelistEight(address _address) external onlyOwner {
-        require(_address != address(0), "Invalid address");
-        whitelistTierEight.push(_address);
-    }
-
-    //add the address in Whitelist tier three to invest
-    function addWhitelistNine(address _address) external onlyOwner {
-        require(_address != address(0), "Invalid address");
-        whitelistTierNine.push(_address);
-    }
-
-    // check the address in whitelist tier one
-    function getWhitelistOne(address _address) public view returns (bool) {
-        uint256 i;
-        uint256 length = whitelistTierOne.length;
-        for (i = 0; i < length; i++) {
-            address _addressArr = whitelistTierOne[i];
-            if (_addressArr == _address) {
-                return true;
-            }
+    function updateTierUsersValue(uint256[9] memory _tiersUsersValue)
+        external
+        onlyOwner
+    {
+        for (uint256 i = 0; i < 9; i++) {
+            totalUserInTiers[i] = _tiersUsersValue[i];
+            maxAllocaPerUserInTiers[i] = tiersMaxCap[i] / totalUserInTiers[i];
         }
-        return false;
     }
 
-    // check the address in whitelist tier two
-    function getWhitelistTwo(address _address) public view returns (bool) {
-        uint256 i;
-        uint256 length = whitelistTierTwo.length;
-        for (i = 0; i < length; i++) {
-            address _addressArr = whitelistTierTwo[i];
-            if (_addressArr == _address) {
-                return true;
-            }
-        }
-        return false;
+    //add the address in Whitelist tier to invest
+    function addWhitelist(uint256 _tier, address _address) external onlyOwner {
+        require(_tier >= 1 && _tier <= 9, "Invalid Tier. Try (1-9)");
+        require(_address != address(0), "Invalid address");
+
+        if (_tier == 1) whitelistTierOne.push(_address);
+        else if (_tier == 2) whitelistTierTwo.push(_address);
+        else if (_tier == 3) whitelistTierThree.push(_address);
+        else if (_tier == 4) whitelistTierFour.push(_address);
+        else if (_tier == 5) whitelistTierFive.push(_address);
+        else if (_tier == 6) whitelistTierSix.push(_address);
+        else if (_tier == 7) whitelistTierSeven.push(_address);
+        else if (_tier == 8) whitelistTierEight.push(_address);
+        else if (_tier == 9) whitelistTierNine.push(_address);
     }
 
-    // check the address in whitelist tier three
-    function getWhitelistThree(address _address) public view returns (bool) {
-        uint256 i;
-        uint256 length = whitelistTierThree.length;
-        for (i = 0; i < length; i++) {
-            address _addressArr = whitelistTierThree[i];
-            if (_addressArr == _address) {
-                return true;
-            }
-        }
-        return false;
-    }
+    // check the address in whitelist tier
+    function getWhitelist(uint256 _tier, address _address)
+        public
+        view
+        returns (bool)
+    {
+        require(_tier >= 1 && _tier <= 9, "Invalid Tier. Try (1-9)");
+        require(_address != address(0), "Invalid address");
 
-    // check the address in whitelist tier Four
-    function getWhitelistFour(address _address) public view returns (bool) {
-        uint256 i;
-        uint256 length = whitelistTierFour.length;
-        for (i = 0; i < length; i++) {
-            address _addressArr = whitelistTierFour[i];
-            if (_addressArr == _address) {
-                return true;
-            }
-        }
-        return false;
-    }
+        address[] memory _whitelistTier;
 
-    // check the address in whitelist tier Five
-    function getWhitelistFive(address _address) public view returns (bool) {
-        uint256 i;
-        uint256 length = whitelistTierFive.length;
-        for (i = 0; i < length; i++) {
-            address _addressArr = whitelistTierFive[i];
-            if (_addressArr == _address) {
-                return true;
-            }
-        }
-        return false;
-    }
+        if (_tier == 1) _whitelistTier = whitelistTierOne;
+        else if (_tier == 2) _whitelistTier = whitelistTierTwo;
+        else if (_tier == 3) _whitelistTier = whitelistTierThree;
+        else if (_tier == 4) _whitelistTier = whitelistTierFour;
+        else if (_tier == 5) _whitelistTier = whitelistTierFive;
+        else if (_tier == 6) _whitelistTier = whitelistTierSix;
+        else if (_tier == 7) _whitelistTier = whitelistTierSeven;
+        else if (_tier == 8) _whitelistTier = whitelistTierEight;
+        else if (_tier == 9) _whitelistTier = whitelistTierNine;
 
-    // check the address in whitelist tier Six
-    function getWhitelistSix(address _address) public view returns (bool) {
-        uint256 i;
-        uint256 length = whitelistTierSix.length;
-        for (i = 0; i < length; i++) {
-            address _addressArr = whitelistTierSix[i];
-            if (_addressArr == _address) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    // check the address in whitelist tier Seven
-    function getWhitelistSeven(address _address) public view returns (bool) {
-        uint256 i;
-        uint256 length = whitelistTierSeven.length;
-        for (i = 0; i < length; i++) {
-            address _addressArr = whitelistTierSeven[i];
-            if (_addressArr == _address) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    // check the address in whitelist tier Eight
-    function getWhitelistEight(address _address) public view returns (bool) {
-        uint256 i;
-        uint256 length = whitelistTierEight.length;
-        for (i = 0; i < length; i++) {
-            address _addressArr = whitelistTierEight[i];
-            if (_addressArr == _address) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    // check the address in whitelist tier Nine
-    function getWhitelistNine(address _address) public view returns (bool) {
-        uint256 i;
-        uint256 length = whitelistTierNine.length;
-        for (i = 0; i < length; i++) {
-            address _addressArr = whitelistTierNine[i];
+        for (uint256 i = 0; i < _whitelistTier.length; i++) {
+            address _addressArr = _whitelistTier[i];
             if (_addressArr == _address) {
                 return true;
             }
@@ -438,170 +210,270 @@ contract SeedifyFundsContract is Ownable {
         _hasAllowance(msg.sender, amount)
         returns (bool)
     {
-        require(block.timestamp >= saleStartTime, "The sale is not started yet "); // solhint-disable
+        require(
+            block.timestamp >= saleStartTime,
+            "The sale is not started yet "
+        ); // solhint-disable
         require(block.timestamp <= saleEndTime, "The sale is closed"); // solhint-disable
         require(
             totalBUSDReceivedInAllTier + amount <= maxCap,
             "buyTokens: purchase would exceed max cap"
         );
 
-        if (getWhitelistOne(msg.sender)) {
+        if (getWhitelist(1, msg.sender)) {
             buyInOneTier[msg.sender] += amount;
             require(
-                buyInOneTier[msg.sender] >= minAllocaPerUserTierOne,
+                buyInOneTier[msg.sender] >= minAllocaPerUserInTiers[0],
                 "your purchasing Power is so Low"
             );
             require(
-                totalBUSDInTierOne + amount <= tierOneMaxCap,
+                totalBUSDInTiers[0] + amount <= tiersMaxCap[0],
                 "buyTokens: purchase would exceed Tier one max cap"
             );
             require(
-                buyInOneTier[msg.sender] <= maxAllocaPerUserTierOne,
+                buyInOneTier[msg.sender] <= maxAllocaPerUserInTiers[0],
                 "buyTokens:You are investing more than your tier-1 limit!"
             );
 
             totalBUSDReceivedInAllTier += amount;
-            totalBUSDInTierOne += amount;
+            totalBUSDInTiers[0] += amount;
             ERC20Interface.safeTransferFrom(msg.sender, projectOwner, amount); //changes to transfer BUSD to owner
-        } else if (getWhitelistTwo(msg.sender)) {
+        } else if (getWhitelist(2, msg.sender)) {
             buyInTwoTier[msg.sender] += amount;
             require(
-                buyInTwoTier[msg.sender] >= minAllocaPerUserTierTwo,
+                buyInTwoTier[msg.sender] >= minAllocaPerUserInTiers[1],
                 "your purchasing Power is so Low"
             );
             require(
-                totalBUSDInTierTwo + amount <= tierTwoMaxCap,
+                totalBUSDInTiers[1] + amount <= tiersMaxCap[1],
                 "buyTokens: purchase would exceed Tier two max cap"
             );
             require(
-                buyInTwoTier[msg.sender] <= maxAllocaPerUserTierTwo,
+                buyInTwoTier[msg.sender] <= maxAllocaPerUserInTiers[1],
                 "buyTokens:You are investing more than your tier-2 limit!"
             );
             totalBUSDReceivedInAllTier += amount;
-            totalBUSDInTierTwo += amount;
+            totalBUSDInTiers[1] += amount;
             ERC20Interface.safeTransferFrom(msg.sender, projectOwner, amount); //changes to transfer BUSD to owner
-        } else if (getWhitelistThree(msg.sender)) {
+        } else if (getWhitelist(3, msg.sender)) {
             buyInThreeTier[msg.sender] += amount;
             require(
-                buyInThreeTier[msg.sender] >= minAllocaPerUserTierThree,
+                buyInThreeTier[msg.sender] >= minAllocaPerUserInTiers[2],
                 "your purchasing Power is so Low"
             );
             require(
-                buyInThreeTier[msg.sender] <= maxAllocaPerUserTierThree,
+                buyInThreeTier[msg.sender] <= maxAllocaPerUserInTiers[2],
                 "buyTokens:You are investing more than your tier-3 limit!"
             );
             require(
-                totalBUSDInTierThree + amount <= tierThreeMaxCap,
+                totalBUSDInTiers[2] + amount <= tiersMaxCap[2],
                 "buyTokens: purchase would exceed Tier three max cap"
             );
             totalBUSDReceivedInAllTier += amount;
-            totalBUSDInTierThree += amount;
+            totalBUSDInTiers[2] += amount;
             ERC20Interface.safeTransferFrom(msg.sender, projectOwner, amount); //changes to transfer BUSD to owner
-        } else if (getWhitelistFour(msg.sender)) {
+        } else if (getWhitelist(4, msg.sender)) {
             buyInFourTier[msg.sender] += amount;
             require(
-                buyInFourTier[msg.sender] >= minAllocaPerUserTierFour,
+                buyInFourTier[msg.sender] >= minAllocaPerUserInTiers[3],
                 "your purchasing Power is so Low"
             );
             require(
-                totalBUSDInTierFour + amount <= tierFourMaxCap,
+                totalBUSDInTiers[3] + amount <= tiersMaxCap[3],
                 "buyTokens: purchase would exceed Tier Four max cap"
             );
             require(
-                buyInFourTier[msg.sender] <= maxAllocaPerUserTierFour,
+                buyInFourTier[msg.sender] <= maxAllocaPerUserInTiers[3],
                 "buyTokens:You are investing more than your tier-4 limit!"
             );
             totalBUSDReceivedInAllTier += amount;
-            totalBUSDInTierFour += amount;
+            totalBUSDInTiers[3] += amount;
             ERC20Interface.safeTransferFrom(msg.sender, projectOwner, amount); //changes to transfer BUSD to owner
-        } else if (getWhitelistFive(msg.sender)) {
+        } else if (getWhitelist(5, msg.sender)) {
             buyInFiveTier[msg.sender] += amount;
             require(
-                buyInFiveTier[msg.sender] >= minAllocaPerUserTierFive,
+                buyInFiveTier[msg.sender] >= minAllocaPerUserInTiers[4],
                 "your purchasing Power is so Low"
             );
             require(
-                totalBUSDInTierFive + amount <= tierFiveMaxCap,
+                totalBUSDInTiers[4] + amount <= tiersMaxCap[4],
                 "buyTokens: purchase would exceed Tier Five max cap"
             );
             require(
-                buyInFiveTier[msg.sender] <= maxAllocaPerUserTierFive,
+                buyInFiveTier[msg.sender] <= maxAllocaPerUserInTiers[4],
                 "buyTokens:You are investing more than your tier-5 limit!"
             );
             totalBUSDReceivedInAllTier += amount;
-            totalBUSDInTierFive += amount;
+            totalBUSDInTiers[4] += amount;
             ERC20Interface.safeTransferFrom(msg.sender, projectOwner, amount); //changes to transfer BUSD to owner
-        } else if (getWhitelistSix(msg.sender)) {
+        } else if (getWhitelist(6, msg.sender)) {
             buyInSixTier[msg.sender] += amount;
             require(
-                buyInSixTier[msg.sender] >= minAllocaPerUserTierSix,
+                buyInSixTier[msg.sender] >= minAllocaPerUserInTiers[5],
                 "your purchasing Power is so Low"
             );
             require(
-                totalBUSDInTierSix + amount <= tierSixMaxCap,
+                totalBUSDInTiers[5] + amount <= tiersMaxCap[5],
                 "buyTokens: purchase would exceed Tier Six max cap"
             );
             require(
-                buyInSixTier[msg.sender] <= maxAllocaPerUserTierSix,
+                buyInSixTier[msg.sender] <= maxAllocaPerUserInTiers[5],
                 "buyTokens:You are investing more than your tier-6 limit!"
             );
             totalBUSDReceivedInAllTier += amount;
-            totalBUSDInTierSix += amount;
+            totalBUSDInTiers[5] += amount;
             ERC20Interface.safeTransferFrom(msg.sender, projectOwner, amount); //changes to transfer BUSD to owner
-        } else if (getWhitelistSeven(msg.sender)) {
+        } else if (getWhitelist(7, msg.sender)) {
             buyInSevenTier[msg.sender] += amount;
             require(
-                buyInSevenTier[msg.sender] >= minAllocaPerUserTierSeven,
+                buyInSevenTier[msg.sender] >= minAllocaPerUserInTiers[6],
                 "your purchasing Power is so Low"
             );
             require(
-                totalBUSDInTierSeven + amount <= tierSevenMaxCap,
+                totalBUSDInTiers[6] + amount <= tiersMaxCap[6],
                 "buyTokens: purchase would exceed Tier Seven max cap"
             );
             require(
-                buyInSevenTier[msg.sender] <= maxAllocaPerUserTierSeven,
+                buyInSevenTier[msg.sender] <= maxAllocaPerUserInTiers[6],
                 "buyTokens:You are investing more than your tier-7 limit!"
             );
             totalBUSDReceivedInAllTier += amount;
-            totalBUSDInTierSeven += amount;
+            totalBUSDInTiers[6] += amount;
             ERC20Interface.safeTransferFrom(msg.sender, projectOwner, amount); //changes to transfer BUSD to owner
-        } else if (getWhitelistEight(msg.sender)) {
+        } else if (getWhitelist(8, msg.sender)) {
             buyInEightTier[msg.sender] += amount;
             require(
-                buyInEightTier[msg.sender] >= minAllocaPerUserTierEight,
+                buyInEightTier[msg.sender] >= minAllocaPerUserInTiers[7],
                 "your purchasing Power is so Low"
             );
             require(
-                totalBUSDInTierEight + amount <= tierEightMaxCap,
+                totalBUSDInTiers[7] + amount <= tiersMaxCap[7],
                 "buyTokens: purchase would exceed Tier Eight max cap"
             );
             require(
-                buyInEightTier[msg.sender] <= maxAllocaPerUserTierEight,
+                buyInEightTier[msg.sender] <= maxAllocaPerUserInTiers[7],
                 "buyTokens:You are investing more than your tier-8 limit!"
             );
             totalBUSDReceivedInAllTier += amount;
-            totalBUSDInTierEight += amount;
+            totalBUSDInTiers[7] += amount;
             ERC20Interface.safeTransferFrom(msg.sender, projectOwner, amount); //changes to transfer BUSD to owner
-        } else if (getWhitelistNine(msg.sender)) {
+        } else if (getWhitelist(9, msg.sender)) {
             buyInNineTier[msg.sender] += amount;
             require(
-                buyInNineTier[msg.sender] >= minAllocaPerUserTierNine,
+                buyInNineTier[msg.sender] >= minAllocaPerUserInTiers[8],
                 "your purchasing Power is so Low"
             );
             require(
-                totalBUSDInTierNine + amount <= tierNineMaxCap,
+                totalBUSDInTiers[8] + amount <= tiersMaxCap[8],
                 "buyTokens: purchase would exceed Tier Nine max cap"
             );
             require(
-                buyInNineTier[msg.sender] <= maxAllocaPerUserTierNine,
+                buyInNineTier[msg.sender] <= maxAllocaPerUserInTiers[8],
                 "buyTokens:You are investing more than your tier-9 limit!"
             );
             totalBUSDReceivedInAllTier += amount;
-            totalBUSDInTierNine += amount;
+            totalBUSDInTiers[8] += amount;
             ERC20Interface.safeTransferFrom(msg.sender, projectOwner, amount); //changes to transfer BUSD to owner
         } else {
             revert("Not whitelisted");
         }
         return true;
+    }
+
+    function refund(uint256 amount) public {
+        uint256 balance = ERC20Interface.balanceOf(address(this));
+        require(balance > amount, "Insufficient Balance");
+
+        if (getWhitelist(1, msg.sender)) {
+            require(
+                buyInOneTier[msg.sender] >= amount,
+                "your refunding Power is so Low"
+            );
+
+            buyInOneTier[msg.sender] -= amount;
+            totalBUSDReceivedInAllTier -= amount;
+            totalBUSDInTiers[0] -= amount;
+            ERC20Interface.transfer(msg.sender, amount); //transfer BUSD to msg.sender
+        } else if (getWhitelist(2, msg.sender)) {
+            require(
+                buyInTwoTier[msg.sender] >= amount,
+                "your refunding Power is so Low"
+            );
+
+            buyInTwoTier[msg.sender] -= amount;
+            totalBUSDReceivedInAllTier -= amount;
+            totalBUSDInTiers[1] -= amount;
+            ERC20Interface.transfer(msg.sender, amount); //transfer BUSD to msg.sender
+        } else if (getWhitelist(3, msg.sender)) {
+            require(
+                buyInThreeTier[msg.sender] >= amount,
+                "your refunding Power is so Low"
+            );
+
+            buyInThreeTier[msg.sender] -= amount;
+            totalBUSDReceivedInAllTier -= amount;
+            totalBUSDInTiers[2] -= amount;
+            ERC20Interface.transfer(msg.sender, amount); //transfer BUSD to msg.sender
+        } else if (getWhitelist(4, msg.sender)) {
+            require(
+                buyInFourTier[msg.sender] >= amount,
+                "your refunding Power is so Low"
+            );
+
+            buyInFourTier[msg.sender] -= amount;
+            totalBUSDReceivedInAllTier -= amount;
+            totalBUSDInTiers[3] -= amount;
+            ERC20Interface.transfer(msg.sender, amount); //transfer BUSD to msg.sender
+        } else if (getWhitelist(5, msg.sender)) {
+            require(
+                buyInFiveTier[msg.sender] >= amount,
+                "your refunding Power is so Low"
+            );
+
+            buyInFiveTier[msg.sender] -= amount;
+            totalBUSDReceivedInAllTier -= amount;
+            totalBUSDInTiers[4] -= amount;
+            ERC20Interface.transfer(msg.sender, amount); //transfer BUSD to msg.sender
+        } else if (getWhitelist(6, msg.sender)) {
+            require(
+                buyInSixTier[msg.sender] >= amount,
+                "your refunding Power is so Low"
+            );
+
+            buyInSixTier[msg.sender] -= amount;
+            totalBUSDReceivedInAllTier -= amount;
+            totalBUSDInTiers[5] -= amount;
+            ERC20Interface.transfer(msg.sender, amount); //transfer BUSD to msg.sender
+        } else if (getWhitelist(7, msg.sender)) {
+            require(
+                buyInSevenTier[msg.sender] >= amount,
+                "your refunding Power is so Low"
+            );
+
+            buyInSevenTier[msg.sender] -= amount;
+            totalBUSDReceivedInAllTier -= amount;
+            totalBUSDInTiers[6] -= amount;
+            ERC20Interface.transfer(msg.sender, amount); //transfer BUSD to msg.sender
+        } else if (getWhitelist(8, msg.sender)) {
+            require(
+                buyInEightTier[msg.sender] >= amount,
+                "your refunding Power is so Low"
+            );
+
+            buyInEightTier[msg.sender] -= amount;
+            totalBUSDReceivedInAllTier -= amount;
+            totalBUSDInTiers[7] -= amount;
+            ERC20Interface.transfer(msg.sender, amount); //transfer BUSD to msg.sender
+        } else if (getWhitelist(9, msg.sender)) {
+            require(
+                buyInNineTier[msg.sender] >= amount,
+                "your refunding Power is so Low"
+            );
+
+            buyInNineTier[msg.sender] -= amount;
+            totalBUSDReceivedInAllTier -= amount;
+            totalBUSDInTiers[8] -= amount;
+            ERC20Interface.transfer(msg.sender, amount); //transfer BUSD to msg.sender
+        }
     }
 }
