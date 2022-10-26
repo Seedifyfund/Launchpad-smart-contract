@@ -1,12 +1,16 @@
 require("@nomiclabs/hardhat-waffle");
 require("@nomiclabs/hardhat-etherscan");
 require('dotenv').config();
+require('hardhat-gas-reporter')
 
 const mnemonic = process.env.MNEMONIC;
 
 module.exports = {
-  defaultNetwork: "bsctestnet",
+  defaultNetwork: "localhost",
   networks: {
+    localhost: {
+      url: "http://127.0.0.1:8545/",
+    },
     hardhat: {
     },
     bsctestnet: {

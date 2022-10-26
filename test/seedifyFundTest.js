@@ -1,97 +1,61 @@
-const Seedify = artifacts.require('SeedifyFundsContract');
+const { expect } = require("chai");
+const { ethers } = require("hardhat");
+var assert = require('assert')
 
-// test case to check the smartcontract deployed correctly or not.
-contract("SeedifyFund", async accounts => {
-  it("is deployed correctly?", async () => {
-    const SeedifyInstance = await Seedify.deployed();
-    //console.log(SeedifyInstance.address);
+describe("SeedifyFund", function () {
+  let SeedifyInstance;
+
+  it("is deployed correctly?", async function () {
+    const Seedify = await ethers.getContractFactory("contracts/SeedifyFund/SeedifyFundBUSD.sol:SeedifyFundsContract");
+    const seedify = await Seedify.deploy(
+      10000000000000000000000n, // _maxCap
+      1666596376, // _saleStartTime
+      1669274776, // _saleEndTime
+      "0xd733Dea83fFf749aEa99bbA541F6F1157A9Cb588", // _projectOwner
+      [100000000000000000000n,
+        200000000000000000000n,
+        300000000000000000000n,
+        400000000000000000000n,
+        500000000000000000000n,
+        600000000000000000000n,
+        700000000000000000000n,
+        800000000000000000000n,
+        900000000000000000000n], // _tiersValue
+      100, // _totalparticipants
+      "0xeD24FC36d5Ee211Ea25A80239Fb8C4Cfd80f12Ee" // _tokenAddress
+    );
+
+    SeedifyInstance = await seedify.deployed();
+    console.log(SeedifyInstance.address);
     assert(SeedifyInstance.address !== '');
   });
-});
 
-// test case written to start the token sale
-contract('SeedifyFund', async accounts => {
   it('is token sale is started?', async () => {
-    const SeedifyInstance = await Seedify.deployed();
     const StartTime = await SeedifyInstance.saleStartTime();
     assert(Date.now() > StartTime);
   });
-});
 
-//Add and check the address in Whitelist tier One
-contract("SeedifyFund", async accounts => {
   it("Add and check the address in Whitelist tier One", async () => {
-    const SeedifyInstance = await Seedify.deployed();
-    const accounts = await web3.eth.getAccounts();
-    await SeedifyInstance.addWhitelistOne(accounts[0]);
-    const result = await SeedifyInstance.getWhitelistOne(accounts[0]);
+    const accounts = await ethers.getSigners();
+    await SeedifyInstance.addWhitelist(1, accounts[0].address);
+    const result = await SeedifyInstance.getWhitelist(1, accounts[0].address);
+    console.log(result)
     assert(result != false);
+  });
 
+  it("Add and check the address in Whitelist tier Two", async () => {
+    const accounts = await ethers.getSigners();
+    await SeedifyInstance.addWhitelist(2, accounts[1].address);
+    const result = await SeedifyInstance.getWhitelist(2, accounts[1].address);
+    console.log(result)
+    assert(result != false);
+  });
+
+  it("Add and check the address in Whitelist tier Three", async () => {
+    const accounts = await ethers.getSigners();
+    await SeedifyInstance.addWhitelist(3, accounts[2].address);
+    const result = await SeedifyInstance.getWhitelist(3, accounts[2].address);
+    console.log(result)
+    assert(result != false);
   });
 });
-
-//Add and check the address in Whitelist tier two
-contract("SeedifyFund", async accounts => {
-  it("Add and check the address in Whitelist tier two", async () => {
-    const SeedifyInstance = await Seedify.deployed();
-    const accounts = await web3.eth.getAccounts();
-    await SeedifyInstance.addWhitelistOne(accounts[1]);
-    const result = await SeedifyInstance.getWhitelistOne(accounts[1]);
-    assert(result != false);
-
-  });
-});
-
-//Add and check the address in Whitelist tier three
-contract("SeedifyFund", async accounts => {
-  it("Add and check the address in Whitelist tier three", async () => {
-    const SeedifyInstance = await Seedify.deployed();
-    const accounts = await web3.eth.getAccounts();
-    await SeedifyInstance.addWhitelistOne(accounts[2]);
-    const result = await SeedifyInstance.getWhitelistOne(accounts[2]);
-    assert(result != false);
-
-  });
-});
-
-// To check the whitelist for tier one
-contract('SeedifyFund', async accounts => {
-  it("Pay One BNB to Check In WhiteListOne, is first tier payment working correctly?", async () => {
-    const instance = await Seedify.deployed();
-
-    const value = 1;
-    const accounts = await web3.eth.getAccounts();
-
-    await instance.addWhitelistOne(accounts[0]);
-    let result = await web3.eth.sendTransaction({ from: accounts[0], to: instance.address, value: value });
-    assert(result != false);
-  })
-})
-
-// To check the whitelist for tier two
-contract('SeedifyFund', async accounts => {
-  it("Pay Two BNB to Check In WhiteListTwo, is second tier payment working correctly?", async () => {
-    const instance = await Seedify.deployed();
-
-    const value = 2;
-    const accounts = await web3.eth.getAccounts();
-
-    await instance.addWhitelistTwo(accounts[0]);
-    let result = await web3.eth.sendTransaction({ from: accounts[0], to: instance.address, value: value });
-    assert(result != false);
-  })
-})
-
-// To check the whitelist for tier three
-contract('SeedifyFund', async accounts => {
-  it("Pay Four BNB to Check In WhiteListThree, is third tier payment working correctly?", async () => {
-    const instance = await Seedify.deployed();
-
-    const value = 4;
-    const accounts = await web3.eth.getAccounts();
-
-    await instance.addWhitelistThree(accounts[0]);
-    let result = await web3.eth.sendTransaction({ from: accounts[0], to: instance.address, value: value });
-    assert(result != false);
-  })
-})
