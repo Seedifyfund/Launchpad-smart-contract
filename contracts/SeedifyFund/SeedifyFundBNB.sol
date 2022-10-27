@@ -18,61 +18,21 @@ contract SeedifyFundsContract is Ownable {
     uint256 public immutable saleStartTime; // start sale time
     uint256 public immutable saleEndTime; // end sale time
     uint256 public totalBnbReceivedInAllTier; // total bnd received
-    uint256 public totalBnbInTierOne; // total bnb for tier one
-    uint256 public totalBnbInTierTwo; // total bnb for tier Tier
-    uint256 public totalBnbInTierThree; // total bnb for tier Three
-    uint256 public totalBnbInTierFour; // total bnb for tier Four
-    uint256 public totalBnbInTierFive; // total bnb for tier Five
-    uint256 public totalBnbInTierSix; // total bnb for tier Six
-    uint256 public totalBnbInTierSeven; // total bnb for tier Seven
-    uint256 public totalBnbInTierEight; // total bnb for tier Eight
-    uint256 public totalBnbInTierNine; // total bnb for tier Nine
+    uint256[9] public totalBNBInTiers; // total BNB for tiers
     uint256 public totalparticipants; // total participants in ido
     address payable public projectOwner; // project Owner
 
-    // max cap per tier
-    uint256 public tierOneMaxCap;
-    uint256 public tierTwoMaxCap;
-    uint256 public tierThreeMaxCap;
-    uint256 public tierFourMaxCap;
-    uint256 public tierFiveMaxCap;
-    uint256 public tierSixMaxCap;
-    uint256 public tierSevenMaxCap;
-    uint256 public tierEightMaxCap;
-    uint256 public tierNineMaxCap;
+        // max cap per tier
+    uint256[9] public tiersMaxCap;
 
     //total users per tier
-    uint256 public totalUserInTierOne;
-    uint256 public totalUserInTierTwo;
-    uint256 public totalUserInTierThree;
-    uint256 public totalUserInTierFour;
-    uint256 public totalUserInTierFive;
-    uint256 public totalUserInTierSix;
-    uint256 public totalUserInTierSeven;
-    uint256 public totalUserInTierEight;
-    uint256 public totalUserInTierNine;
+    uint256[9] public totalUserInTiers;
 
     //max allocations per user in a tier
-    uint256 public maxAllocaPerUserTierOne;
-    uint256 public maxAllocaPerUserTierTwo;
-    uint256 public maxAllocaPerUserTierThree;
-    uint256 public maxAllocaPerUserTierFour;
-    uint256 public maxAllocaPerUserTierFive;
-    uint256 public maxAllocaPerUserTierSix;
-    uint256 public maxAllocaPerUserTierSeven;
-    uint256 public maxAllocaPerUserTierEight;
-    uint256 public maxAllocaPerUserTierNine;
+    uint256[9] public maxAllocaPerUserInTiers;
 
     //min allocation per user in a tier
-    uint256 public minAllocaPerUserTierOne;
-    uint256 public minAllocaPerUserTierTwo;
-    uint256 public minAllocaPerUserTierThree;
-    uint256 public minAllocaPerUserTierFour;
-    uint256 public minAllocaPerUserTierFive;
-    uint256 public minAllocaPerUserTierSix;
-    uint256 public minAllocaPerUserTierSeven;
-    uint256 public minAllocaPerUserTierEight;
-    uint256 public minAllocaPerUserTierNine;
+    uint256[9] public minAllocaPerUserInTiers;
 
     // address array for tier one whitelist
     address[] private whitelistTierOne;
@@ -129,15 +89,7 @@ contract SeedifyFundsContract is Ownable {
         uint256 _saleStartTime,
         uint256 _saleEndTime,
         address payable _projectOwner,
-        uint256 _tierOneValue,
-        uint256 _tierTwoValue,
-        uint256 _tierThreeValue,
-        uint256 _tierFourValue,
-        uint256 _tierFiveValue,
-        uint256 _tierSixValue,
-        uint256 _tierSevenValue,
-        uint256 _tierEightValue,
-        uint256 _tierNineValue,
+        uint256[9] memory _tiersValue,
         uint256 _totalparticipants
     ) public {
         maxCap = _maxCap;
@@ -145,278 +97,97 @@ contract SeedifyFundsContract is Ownable {
         saleEndTime = _saleEndTime;
 
         projectOwner = _projectOwner;
-        tierOneMaxCap = _tierOneValue;
-        tierTwoMaxCap = _tierTwoValue;
-        tierThreeMaxCap = _tierThreeValue;
-        tierFourMaxCap = _tierFourValue;
-        tierFiveMaxCap = _tierFiveValue;
-        tierSixMaxCap = _tierSixValue;
-        tierSevenMaxCap = _tierSevenValue;
-        tierEightMaxCap = _tierEightValue;
-        tierNineMaxCap = _tierNineValue;
+        
+        for (uint256 i = 0; i < 9; i++) {
+            tiersMaxCap[i] = _tiersValue[i];
+        }
 
-        minAllocaPerUserTierOne = 1000000000000000;
-        minAllocaPerUserTierTwo = 1000000000000000;
-        minAllocaPerUserTierThree = 1000000000000000;
-        minAllocaPerUserTierFour = 1000000000000000;
-        minAllocaPerUserTierFive = 1000000000000000;
-        minAllocaPerUserTierSix = 1000000000000000;
-        minAllocaPerUserTierSeven = 1000000000000000;
-        minAllocaPerUserTierEight = 1000000000000000;
-        minAllocaPerUserTierNine = 1000000000000000;
+        minAllocaPerUserInTiers[0] = 10000000000000;
+        minAllocaPerUserInTiers[1] = 10000000000000;
+        minAllocaPerUserInTiers[2] = 10000000000000;
+        minAllocaPerUserInTiers[3] = 10000000000000;
+        minAllocaPerUserInTiers[4] = 10000000000000;
+        minAllocaPerUserInTiers[5] = 10000000000000;
+        minAllocaPerUserInTiers[6] = 10000000000000;
+        minAllocaPerUserInTiers[7] = 10000000000000;
+        minAllocaPerUserInTiers[8] = 10000000000000;
 
-        totalUserInTierOne = 669;
-        totalUserInTierTwo = 494;
-        totalUserInTierThree = 1;
-        totalUserInTierFour = 1;
-        totalUserInTierFive = 1;
-        totalUserInTierSix = 1;
-        totalUserInTierSeven = 1;
-        totalUserInTierEight = 1;
-        totalUserInTierNine = 1;
+        totalUserInTiers[0] = 669;
+        totalUserInTiers[1] = 494;
+        totalUserInTiers[2] = 1;
+        totalUserInTiers[3] = 1;
+        totalUserInTiers[4] = 1;
+        totalUserInTiers[5] = 1;
+        totalUserInTiers[6] = 1;
+        totalUserInTiers[7] = 1;
+        totalUserInTiers[8] = 1;
 
-        maxAllocaPerUserTierOne = tierOneMaxCap / totalUserInTierOne;
-        maxAllocaPerUserTierTwo = tierTwoMaxCap / totalUserInTierTwo;
-        maxAllocaPerUserTierThree = tierThreeMaxCap / totalUserInTierThree;
-        maxAllocaPerUserTierFour = tierFourMaxCap / totalUserInTierFour;
-        maxAllocaPerUserTierFive = tierFiveMaxCap / totalUserInTierFive;
-        maxAllocaPerUserTierSix = tierSixMaxCap / totalUserInTierSix;
-        maxAllocaPerUserTierSeven = tierSevenMaxCap / totalUserInTierSeven;
-        maxAllocaPerUserTierEight = tierEightMaxCap / totalUserInTierEight;
-        maxAllocaPerUserTierNine = tierNineMaxCap / totalUserInTierNine;
+        for (uint256 i = 0; i < 9; i++) {
+            maxAllocaPerUserInTiers[i] = tiersMaxCap[i] / totalUserInTiers[i];
+        }
+
         totalparticipants = _totalparticipants;
     }
 
     // function to update the tiers value manually
     function updateTierValues(
-        uint256 _tierOneValue,
-        uint256 _tierTwoValue,
-        uint256 _tierThreeValue,
-        uint256 _tierFourValue,
-        uint256 _tierFiveValue,
-        uint256 _tierSixValue,
-        uint256 _tierSevenValue,
-        uint256 _tierEightValue,
-        uint256 _tierNineValue
+        uint256[9] memory _tiersValue
     ) external onlyOwner {
-        tierOneMaxCap = _tierOneValue;
-        tierTwoMaxCap = _tierTwoValue;
-        tierThreeMaxCap = _tierThreeValue;
-        tierFourMaxCap = _tierFourValue;
-        tierFiveMaxCap = _tierFiveValue;
-        tierSixMaxCap = _tierSixValue;
-        tierSevenMaxCap = _tierSevenValue;
-        tierEightMaxCap = _tierEightValue;
-        tierNineMaxCap = _tierNineValue;
-
-        maxAllocaPerUserTierOne = tierOneMaxCap / totalUserInTierOne;
-        maxAllocaPerUserTierTwo = tierTwoMaxCap / totalUserInTierTwo;
-        maxAllocaPerUserTierThree = tierThreeMaxCap / totalUserInTierThree;
-        maxAllocaPerUserTierFour = tierFourMaxCap / totalUserInTierFour;
-        maxAllocaPerUserTierFive = tierFiveMaxCap / totalUserInTierFive;
-        maxAllocaPerUserTierSix = tierSixMaxCap / totalUserInTierSix;
-        maxAllocaPerUserTierSeven = tierSevenMaxCap / totalUserInTierSeven;
-        maxAllocaPerUserTierEight = tierEightMaxCap / totalUserInTierEight;
-        maxAllocaPerUserTierNine = tierNineMaxCap / totalUserInTierNine;
+        for (uint256 i = 0; i < 9; i++) {
+            tiersMaxCap[i] = _tiersValue[i];
+            maxAllocaPerUserInTiers[i] = tiersMaxCap[i] / totalUserInTiers[i];
+        }
     }
 
     // function to update the tiers users value manually
     function updateTierUsersValue(
-        uint256 _tierOneUsersValue,
-        uint256 _tierTwoUsersValue,
-        uint256 _tierThreeUsersValue,
-        uint256 _tierFourUsersValue,
-        uint256 _tierFiveUsersValue,
-        uint256 _tierSixUsersValue,
-        uint256 _tierSevenUsersValue,
-        uint256 _tierEightUsersValue,
-        uint256 _tierNineUsersValue
+        uint256[9] memory _tiersUsersValue
     ) external onlyOwner {
-        totalUserInTierOne = _tierOneUsersValue;
-        totalUserInTierTwo = _tierTwoUsersValue;
-        totalUserInTierThree = _tierThreeUsersValue;
-        totalUserInTierFour = _tierFourUsersValue;
-        totalUserInTierFive = _tierFiveUsersValue;
-        totalUserInTierSix = _tierSixUsersValue;
-        totalUserInTierSeven = _tierSevenUsersValue;
-        totalUserInTierEight = _tierEightUsersValue;
-        totalUserInTierNine = _tierNineUsersValue;
-
-        maxAllocaPerUserTierOne = tierOneMaxCap / totalUserInTierOne;
-        maxAllocaPerUserTierTwo = tierTwoMaxCap / totalUserInTierTwo;
-        maxAllocaPerUserTierThree = tierThreeMaxCap / totalUserInTierThree;
-        maxAllocaPerUserTierFour = tierFourMaxCap / totalUserInTierFour;
-        maxAllocaPerUserTierFive = tierFiveMaxCap / totalUserInTierFive;
-        maxAllocaPerUserTierSix = tierSixMaxCap / totalUserInTierSix;
-        maxAllocaPerUserTierSeven = tierSevenMaxCap / totalUserInTierSeven;
-        maxAllocaPerUserTierEight = tierEightMaxCap / totalUserInTierEight;
-        maxAllocaPerUserTierNine = tierNineMaxCap / totalUserInTierNine;
-    }
-
-    //add the address in Whitelist tier One to invest
-    function addWhitelistOne(address _address) external onlyOwner {
-        require(_address != address(0), "Invalid address");
-        whitelistTierOne.push(_address);
-    }
-
-    //add the address in Whitelist tier two to invest
-    function addWhitelistTwo(address _address) external onlyOwner {
-        require(_address != address(0), "Invalid address");
-        whitelistTierTwo.push(_address);
-    }
-
-    //add the address in Whitelist tier three to invest
-    function addWhitelistThree(address _address) external onlyOwner {
-        require(_address != address(0), "Invalid address");
-        whitelistTierThree.push(_address);
-    }
-
-    //add the address in Whitelist tier Four to invest
-    function addWhitelistFour(address _address) external onlyOwner {
-        require(_address != address(0), "Invalid address");
-        whitelistTierFour.push(_address);
-    }
-
-    //add the address in Whitelist tier three to invest
-    function addWhitelistFive(address _address) external onlyOwner {
-        require(_address != address(0), "Invalid address");
-        whitelistTierFive.push(_address);
-    }
-
-    //add the address in Whitelist tier three to invest
-    function addWhitelistSix(address _address) external onlyOwner {
-        require(_address != address(0), "Invalid address");
-        whitelistTierSix.push(_address);
-    }
-
-    //add the address in Whitelist tier three to invest
-    function addWhitelistSeven(address _address) external onlyOwner {
-        require(_address != address(0), "Invalid address");
-        whitelistTierSeven.push(_address);
-    }
-
-    //add the address in Whitelist tier three to invest
-    function addWhitelistEight(address _address) external onlyOwner {
-        require(_address != address(0), "Invalid address");
-        whitelistTierEight.push(_address);
-    }
-
-    //add the address in Whitelist tier three to invest
-    function addWhitelistNine(address _address) external onlyOwner {
-        require(_address != address(0), "Invalid address");
-        whitelistTierNine.push(_address);
-    }
-
-    // check the address in whitelist tier one
-    function getWhitelistOne(address _address) public view returns (bool) {
-        uint256 i;
-        uint256 length = whitelistTierOne.length;
-        for (i = 0; i < length; i++) {
-            address _addressArr = whitelistTierOne[i];
-            if (_addressArr == _address) {
-                return true;
-            }
+        for (uint256 i = 0; i < 9; i++) {
+            totalUserInTiers[i] = _tiersUsersValue[i];
+            maxAllocaPerUserInTiers[i] = tiersMaxCap[i] / totalUserInTiers[i];
         }
-        return false;
     }
 
-    // check the address in whitelist tier two
-    function getWhitelistTwo(address _address) public view returns (bool) {
-        uint256 i;
-        uint256 length = whitelistTierTwo.length;
-        for (i = 0; i < length; i++) {
-            address _addressArr = whitelistTierTwo[i];
-            if (_addressArr == _address) {
-                return true;
-            }
-        }
-        return false;
+    //add the address in Whitelist tier to invest
+    function addWhitelist(uint256 _tier, address _address) external onlyOwner {
+        require(_tier >= 1 && _tier <= 9, "Invalid Tier. Try (1-9)");
+        require(_address != address(0), "Invalid address");
+
+        if (_tier == 1) whitelistTierOne.push(_address);
+        else if (_tier == 2) whitelistTierTwo.push(_address);
+        else if (_tier == 3) whitelistTierThree.push(_address);
+        else if (_tier == 4) whitelistTierFour.push(_address);
+        else if (_tier == 5) whitelistTierFive.push(_address);
+        else if (_tier == 6) whitelistTierSix.push(_address);
+        else if (_tier == 7) whitelistTierSeven.push(_address);
+        else if (_tier == 8) whitelistTierEight.push(_address);
+        else if (_tier == 9) whitelistTierNine.push(_address);
     }
 
-    // check the address in whitelist tier three
-    function getWhitelistThree(address _address) public view returns (bool) {
-        uint256 i;
-        uint256 length = whitelistTierThree.length;
-        for (i = 0; i < length; i++) {
-            address _addressArr = whitelistTierThree[i];
-            if (_addressArr == _address) {
-                return true;
-            }
-        }
-        return false;
-    }
+    // check the address in whitelist tier
+    function getWhitelist(uint256 _tier, address _address)
+        public
+        view
+        returns (bool)
+    {
+        require(_tier >= 1 && _tier <= 9, "Invalid Tier. Try (1-9)");
+        require(_address != address(0), "Invalid address");
 
-    // check the address in whitelist tier Four
-    function getWhitelistFour(address _address) public view returns (bool) {
-        uint256 i;
-        uint256 length = whitelistTierFour.length;
-        for (i = 0; i < length; i++) {
-            address _addressArr = whitelistTierFour[i];
-            if (_addressArr == _address) {
-                return true;
-            }
-        }
-        return false;
-    }
+        address[] memory _whitelistTier;
 
-    // check the address in whitelist tier Five
-    function getWhitelistFive(address _address) public view returns (bool) {
-        uint256 i;
-        uint256 length = whitelistTierFive.length;
-        for (i = 0; i < length; i++) {
-            address _addressArr = whitelistTierFive[i];
-            if (_addressArr == _address) {
-                return true;
-            }
-        }
-        return false;
-    }
+        if (_tier == 1) _whitelistTier = whitelistTierOne;
+        else if (_tier == 2) _whitelistTier = whitelistTierTwo;
+        else if (_tier == 3) _whitelistTier = whitelistTierThree;
+        else if (_tier == 4) _whitelistTier = whitelistTierFour;
+        else if (_tier == 5) _whitelistTier = whitelistTierFive;
+        else if (_tier == 6) _whitelistTier = whitelistTierSix;
+        else if (_tier == 7) _whitelistTier = whitelistTierSeven;
+        else if (_tier == 8) _whitelistTier = whitelistTierEight;
+        else if (_tier == 9) _whitelistTier = whitelistTierNine;
 
-    // check the address in whitelist tier Six
-    function getWhitelistSix(address _address) public view returns (bool) {
-        uint256 i;
-        uint256 length = whitelistTierSix.length;
-        for (i = 0; i < length; i++) {
-            address _addressArr = whitelistTierSix[i];
-            if (_addressArr == _address) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    // check the address in whitelist tier Seven
-    function getWhitelistSeven(address _address) public view returns (bool) {
-        uint256 i;
-        uint256 length = whitelistTierSeven.length;
-        for (i = 0; i < length; i++) {
-            address _addressArr = whitelistTierSeven[i];
-            if (_addressArr == _address) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    // check the address in whitelist tier Eight
-    function getWhitelistEight(address _address) public view returns (bool) {
-        uint256 i;
-        uint256 length = whitelistTierEight.length;
-        for (i = 0; i < length; i++) {
-            address _addressArr = whitelistTierEight[i];
-            if (_addressArr == _address) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    // check the address in whitelist tier Nine
-    function getWhitelistNine(address _address) public view returns (bool) {
-        uint256 i;
-        uint256 length = whitelistTierNine.length;
-        for (i = 0; i < length; i++) {
-            address _addressArr = whitelistTierNine[i];
+        for (uint256 i = 0; i < _whitelistTier.length; i++) {
+            address _addressArr = _whitelistTier[i];
             if (_addressArr == _address) {
                 return true;
             }
@@ -463,176 +234,170 @@ contract SeedifyFundsContract is Ownable {
             "buyTokens: purchase would exceed max cap"
         );
 
-        if (getWhitelistOne(msg.sender)) {
+        if (getWhitelist(1, msg.sender)) {
             minBuyInOneTier[msg.sender] += msg.value;
             require(
-                minBuyInOneTier[msg.sender] >= minAllocaPerUserTierOne,
+                minBuyInOneTier[msg.sender] >= minAllocaPerUserInTiers[0],
                 "your purchasing Power is so Low"
             );
             require(
-                totalBnbInTierOne + msg.value <= tierOneMaxCap,
+                totalBNBInTiers[0] + msg.value <= tiersMaxCap[0],
                 "buyTokens: purchase would exceed Tier one max cap"
             );
             require(
-                buyInOneTier[msg.sender] + msg.value <= maxAllocaPerUserTierOne,
+                buyInOneTier[msg.sender] + msg.value <= maxAllocaPerUserInTiers[0],
                 "buyTokens:You are investing more than your tier-1 limit!"
             );
 
             buyInOneTier[msg.sender] += msg.value;
             totalBnbReceivedInAllTier += msg.value;
-            totalBnbInTierOne += msg.value;
+            totalBNBInTiers[0] += msg.value;
             sendValue(projectOwner, address(this).balance);
-        } else if (getWhitelistTwo(msg.sender)) {
+        } else if (getWhitelist(2, msg.sender)) {
             minBuyInTwoTier[msg.sender] += msg.value;
             require(
-                minBuyInTwoTier[msg.sender] >= minAllocaPerUserTierTwo,
+                minBuyInTwoTier[msg.sender] >= minAllocaPerUserInTiers[1],
                 "your purchasing Power is so Low"
             );
             require(
-                totalBnbInTierTwo + msg.value <= tierTwoMaxCap,
+                totalBNBInTiers[1] + msg.value <= tiersMaxCap[1],
                 "buyTokens: purchase would exceed Tier two max cap"
             );
             require(
-                buyInTwoTier[msg.sender] + msg.value <= maxAllocaPerUserTierTwo,
+                buyInTwoTier[msg.sender] + msg.value <= maxAllocaPerUserInTiers[1],
                 "buyTokens:You are investing more than your tier-2 limit!"
             );
 
             buyInTwoTier[msg.sender] += msg.value;
             totalBnbReceivedInAllTier += msg.value;
-            totalBnbInTierTwo += msg.value;
+            totalBNBInTiers[1] += msg.value;
             sendValue(projectOwner, address(this).balance);
-        } else if (getWhitelistThree(msg.sender)) {
+        } else if (getWhitelist(3, msg.sender)) {
             minBuyInThreeTier[msg.sender] += msg.value;
             require(
-                minBuyInThreeTier[msg.sender] >= minAllocaPerUserTierThree,
+                minBuyInThreeTier[msg.sender] >= minAllocaPerUserInTiers[2],
                 "your purchasing Power is so Low"
             );
             require(
-                buyInThreeTier[msg.sender] + msg.value <=
-                    maxAllocaPerUserTierThree,
+                buyInThreeTier[msg.sender] + msg.value <= maxAllocaPerUserInTiers[2],
                 "buyTokens:You are investing more than your tier-3 limit!"
             );
             require(
-                totalBnbInTierThree + msg.value <= tierThreeMaxCap,
+                totalBNBInTiers[2] + msg.value <= tiersMaxCap[2],
                 "buyTokens: purchase would exceed Tier three max cap"
             );
 
             buyInThreeTier[msg.sender] += msg.value;
             totalBnbReceivedInAllTier += msg.value;
-            totalBnbInTierThree += msg.value;
+            totalBNBInTiers[2] += msg.value;
             sendValue(projectOwner, address(this).balance);
-        } else if (getWhitelistFour(msg.sender)) {
+        } else if (getWhitelist(4, msg.sender)) {
             minBuyInFourTier[msg.sender] += msg.value;
             require(
-                minBuyInFourTier[msg.sender] >= minAllocaPerUserTierFour,
+                minBuyInFourTier[msg.sender] >= minAllocaPerUserInTiers[3],
                 "your purchasing Power is so Low"
             );
             require(
-                totalBnbInTierFour + msg.value <= tierFourMaxCap,
+                totalBNBInTiers[3] + msg.value <= tiersMaxCap[3],
                 "buyTokens: purchase would exceed Tier Four max cap"
             );
             require(
-                buyInFourTier[msg.sender] + msg.value <=
-                    maxAllocaPerUserTierFour,
+                buyInFourTier[msg.sender] + msg.value <= maxAllocaPerUserInTiers[3],
                 "buyTokens:You are investing more than your tier-4 limit!"
             );
             buyInFourTier[msg.sender] += msg.value;
             totalBnbReceivedInAllTier += msg.value;
-            totalBnbInTierFour += msg.value;
+            totalBNBInTiers[3] += msg.value;
             sendValue(projectOwner, address(this).balance);
-        } else if (getWhitelistFive(msg.sender)) {
+        } else if (getWhitelist(5, msg.sender)) {
             minBuyInFiveTier[msg.sender] += msg.value;
             require(
-                minBuyInFiveTier[msg.sender] >= minAllocaPerUserTierFive,
+                minBuyInFiveTier[msg.sender] >= minAllocaPerUserInTiers[4],
                 "your purchasing Power is so Low"
             );
             require(
-                totalBnbInTierFive + msg.value <= tierFiveMaxCap,
+                totalBNBInTiers[4] + msg.value <= tiersMaxCap[4],
                 "buyTokens: purchase would exceed Tier Five max cap"
             );
             require(
-                buyInFiveTier[msg.sender] + msg.value <=
-                    maxAllocaPerUserTierFive,
+                buyInFiveTier[msg.sender] + msg.value <= maxAllocaPerUserInTiers[4],
                 "buyTokens:You are investing more than your tier-5 limit!"
             );
             buyInFiveTier[msg.sender] += msg.value;
             totalBnbReceivedInAllTier += msg.value;
-            totalBnbInTierFive += msg.value;
+            totalBNBInTiers[4] += msg.value;
             sendValue(projectOwner, address(this).balance);
-        } else if (getWhitelistSix(msg.sender)) {
+        } else if (getWhitelist(6, msg.sender)) {
             minBuyInSixTier[msg.sender] += msg.value;
             require(
-                minBuyInSixTier[msg.sender] >= minAllocaPerUserTierSix,
+                minBuyInSixTier[msg.sender] >= minAllocaPerUserInTiers[5],
                 "your purchasing Power is so Low"
             );
             require(
-                totalBnbInTierSix + msg.value <= tierSixMaxCap,
+                totalBNBInTiers[5] + msg.value <= tiersMaxCap[5],
                 "buyTokens: purchase would exceed Tier Six max cap"
             );
             require(
-                buyInSixTier[msg.sender] + msg.value <= maxAllocaPerUserTierSix,
+                buyInSixTier[msg.sender] + msg.value <= maxAllocaPerUserInTiers[5],
                 "buyTokens:You are investing more than your tier-6 limit!"
             );
             buyInSixTier[msg.sender] += msg.value;
             totalBnbReceivedInAllTier += msg.value;
-            totalBnbInTierSix += msg.value;
+            totalBNBInTiers[5] += msg.value;
             sendValue(projectOwner, address(this).balance);
-        } else if (getWhitelistSeven(msg.sender)) {
+        } else if (getWhitelist(7, msg.sender)) {
             minBuyInSevenTier[msg.sender] += msg.value;
             require(
-                minBuyInSevenTier[msg.sender] >= minAllocaPerUserTierSeven,
+                minBuyInSevenTier[msg.sender] >= minAllocaPerUserInTiers[6],
                 "your purchasing Power is so Low"
             );
             require(
-                totalBnbInTierSeven + msg.value <= tierSevenMaxCap,
+                totalBNBInTiers[6] + msg.value <= tiersMaxCap[6],
                 "buyTokens: purchase would exceed Tier Seven max cap"
             );
             require(
-                buyInSevenTier[msg.sender] + msg.value <=
-                    maxAllocaPerUserTierSeven,
+                buyInSevenTier[msg.sender] + msg.value <= maxAllocaPerUserInTiers[6],
                 "buyTokens:You are investing more than your tier-7 limit!"
             );
             buyInSevenTier[msg.sender] += msg.value;
             totalBnbReceivedInAllTier += msg.value;
-            totalBnbInTierSeven += msg.value;
+            totalBNBInTiers[6] += msg.value;
             sendValue(projectOwner, address(this).balance);
-        } else if (getWhitelistEight(msg.sender)) {
+        } else if (getWhitelist(8, msg.sender)) {
             minBuyInEightTier[msg.sender] += msg.value;
             require(
-                minBuyInEightTier[msg.sender] >= minAllocaPerUserTierEight,
+                minBuyInEightTier[msg.sender] >= minAllocaPerUserInTiers[7],
                 "your purchasing Power is so Low"
             );
             require(
-                totalBnbInTierEight + msg.value <= tierEightMaxCap,
+                totalBNBInTiers[7] + msg.value <= tiersMaxCap[7],
                 "buyTokens: purchase would exceed Tier Eight max cap"
             );
             require(
-                buyInEightTier[msg.sender] + msg.value <=
-                    maxAllocaPerUserTierEight,
+                buyInEightTier[msg.sender] + msg.value <= maxAllocaPerUserInTiers[7],
                 "buyTokens:You are investing more than your tier-8 limit!"
             );
             buyInEightTier[msg.sender] += msg.value;
             totalBnbReceivedInAllTier += msg.value;
-            totalBnbInTierEight += msg.value;
+            totalBNBInTiers[7] += msg.value;
             sendValue(projectOwner, address(this).balance);
-        } else if (getWhitelistNine(msg.sender)) {
+        } else if (getWhitelist(9, msg.sender)) {
             minBuyInNineTier[msg.sender] += msg.value;
             require(
-                minBuyInNineTier[msg.sender] >= minAllocaPerUserTierNine,
+                minBuyInNineTier[msg.sender] >= minAllocaPerUserInTiers[8],
                 "your purchasing Power is so Low"
             );
             require(
-                totalBnbInTierNine + msg.value <= tierNineMaxCap,
+                totalBNBInTiers[8] + msg.value <= tiersMaxCap[8],
                 "buyTokens: purchase would exceed Tier Nine max cap"
             );
             require(
-                buyInNineTier[msg.sender] + msg.value <=
-                    maxAllocaPerUserTierNine,
+                buyInNineTier[msg.sender] + msg.value <= maxAllocaPerUserInTiers[8],
                 "buyTokens:You are investing more than your tier-9 limit!"
             );
             buyInNineTier[msg.sender] += msg.value;
             totalBnbReceivedInAllTier += msg.value;
-            totalBnbInTierNine += msg.value;
+            totalBNBInTiers[8] += msg.value;
             sendValue(projectOwner, address(this).balance);
         } else {
             revert();
