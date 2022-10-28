@@ -1,15 +1,61 @@
-# Basic Sample Hardhat Project
+# Launchpad Smart Contract
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, a sample script that deploys that contract, and an example of a task implementation, which simply lists the available accounts.
+## Pre-requisite
 
-Try running some of the following tasks:
+* Hardhat
+* Solidity
+* Node
+* NPM
+* Web3.js
+* Metamask
+* Binance Network
+
+### Steps For Deployment
+
+## Compile & Clean
 
 ```shell
-npx hardhat accounts
 npx hardhat compile
 npx hardhat clean
-npx hardhat test
-npx hardhat node
-node scripts/sample-script.js
-npx hardhat help
 ```
+
+## hardhat-gas-reporter
+
+```shell
+npm install hardhat-gas-reporter --save-dev
+```
+And add the following to your hardhat.config.js:
+
+```shell
+require("hardhat-gas-reporter");
+```
+
+Or, if you are using TypeScript, add this to your hardhat.config.ts:
+
+```shell
+import "hardhat-gas-reporter"
+```
+
+## Test
+
+```shell
+npx hardhat node
+
+Open New Terminal
+npx hardhat accounts
+npx hardhat test
+```
+## Compiling your contracts...
+
+> Compiled 1 Solidity file successfully
+
+    ✓ is deployed correctly? (3302471 gas)
+    ✓ is token sale is started? (3233874 gas)
+    true
+    ✓ Add and check the address in Whitelist tier One (3302437 gas)
+    true
+    ✓ Add and check the address in Whitelist tier Two (137149 gas)
+    true
+    ✓ Add and check the address in Whitelist tier Three (137183 gas)
+    true
+    5 passing (13s)
