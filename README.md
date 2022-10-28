@@ -10,7 +10,7 @@
 * Metamask
 * Binance Network
 
-### Steps For Deployment
+### Steps For Test And Deployment
 
 ## Compile & Clean
 
@@ -19,7 +19,7 @@ npx hardhat compile
 npx hardhat clean
 ```
 
-## hardhat-gas-reporter
+## Gas Reporter
 
 ```shell
 npm install hardhat-gas-reporter --save-dev
@@ -42,6 +42,7 @@ import "hardhat-gas-reporter"
 npx hardhat node
 
 Open New Terminal
+
 npx hardhat accounts
 npx hardhat test
 ```
@@ -59,3 +60,37 @@ npx hardhat test
     ✓ Add and check the address in Whitelist tier Three (137183 gas)
     true
     5 passing (13s)
+
+## Flatten
+
+If the contracts folder contains a multiple contracts, the one you want to flatten, the execution code can omit the file you want to flatten. That is, you can use:
+
+```shell
+$ npx hardhat flatten ./contracts/Token.sol > flattenedToken.sol
+```
+
+However, if the contracts folder has more than one contract, HardHat will flatten all existing contracts into a single file. That is, you can use:
+
+```shell
+$ npx hardhat flatten  > flattenedAll.sol
+```
+
+## Deploy
+
+As general rule, you can target any network from your Hardhat config using:
+
+```shell
+npx hardhat run --network <your-network> scripts/deploy.js
+```
+
+## Verify
+
+Once your contract is ready, the next step is to deploy it to a live network and verify its source code. Verifying a contract means making its source code public.
+
+The first thing you need is an API key from Etherscan. Open your Hardhat config and add the API key you just created.
+
+```shell
+npx hardhat verify --network <your-network> --constructor-args scripts/arguments.js <contract-address>
+```
+
+After the task is successfully executed, you'll see a link to the publicly verified code of your contract.
