@@ -26,6 +26,8 @@ contract SeedifyFundsContract is Ownable {
     uint256[9] public totalBUSDInTiers; // total BUSD for tiers
     uint256 public totalparticipants; // total participants in ido
     address payable public projectOwner; // project Owner
+    address public tokenIGO;
+    uint256 public tokenPrice;
 
     // max cap per tier
     uint256[9] public tiersMaxCap;
@@ -67,6 +69,7 @@ contract SeedifyFundsContract is Ownable {
     address[] private whitelistTierNine;
 
     IERC20 public ERC20Interface;
+    IERC20 public ERC20tokenIGO;
     address public tokenAddress;
 
     //mapping the user purchase per tier
@@ -127,6 +130,7 @@ contract SeedifyFundsContract is Ownable {
         require(_tokenAddress != address(0), "Zero token address"); //Adding token to the contract
         tokenAddress = _tokenAddress;
         ERC20Interface = IERC20(tokenAddress);
+        ERC20tokenIGO  = IERC20(tokenIGO);
     }
 
     // function to update the tiers value manually
@@ -235,9 +239,15 @@ contract SeedifyFundsContract is Ownable {
                 "buyTokens:You are investing more than your tier-1 limit!"
             );
 
+            uint256 rewardPriceUsd = amount;
+
+            uint256 tokensDiv = rewardPriceUsd / tokenPrice / 100;
+
+
             totalBUSDReceivedInAllTier += amount;
             totalBUSDInTiers[0] += amount;
             ERC20Interface.safeTransferFrom(msg.sender, projectOwner, amount); //changes to transfer BUSD to owner
+            ERC20tokenIGO.safeTransferFrom(address(this), msg.sender, tokensDiv);
         } else if (getWhitelist(2, msg.sender)) {
             buyInTwoTier[msg.sender] += amount;
             require(
