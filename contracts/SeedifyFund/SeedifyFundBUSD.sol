@@ -72,6 +72,14 @@ contract SeedifyFundsContract is Ownable {
     IERC20 public ERC20tokenIGO;
     address public tokenAddress;
 
+    struct fundUser {
+        uint256 amountBUSD;
+        uint256 amountIGOToken;
+    }
+
+
+    mapping(address => fundUser) public _fundUser;
+
     //mapping the user purchase per tier
     mapping(address => uint256) public buyInOneTier;
     mapping(address => uint256) public buyInTwoTier;
@@ -239,15 +247,23 @@ contract SeedifyFundsContract is Ownable {
                 "buyTokens:You are investing more than your tier-1 limit!"
             );
 
-            uint256 rewardPriceUsd = amount;
+            
 
+            uint256 rewardPriceUsd = amount;
             uint256 tokensDiv = rewardPriceUsd / tokenPrice / 100;
 
 
             totalBUSDReceivedInAllTier += amount;
             totalBUSDInTiers[0] += amount;
+
+            _fundUser[msg.sender] = fundUser(
+                amount, 
+                tokensDiv
+            );
+
             ERC20Interface.safeTransferFrom(msg.sender, projectOwner, amount); //changes to transfer BUSD to owner
             ERC20tokenIGO.safeTransferFrom(address(this), msg.sender, tokensDiv);
+
         } else if (getWhitelist(2, msg.sender)) {
             buyInTwoTier[msg.sender] += amount;
             require(
@@ -392,7 +408,9 @@ contract SeedifyFundsContract is Ownable {
 
     function refund(uint256 amount) public {
         uint256 balance = ERC20Interface.balanceOf(address(this));
+        
         require(balance > amount, "Insufficient Balance");
+        
 
         if (getWhitelist(1, msg.sender)) {
             require(
@@ -403,7 +421,9 @@ contract SeedifyFundsContract is Ownable {
             buyInOneTier[msg.sender] -= amount;
             totalBUSDReceivedInAllTier -= amount;
             totalBUSDInTiers[0] -= amount;
-            ERC20Interface.transfer(msg.sender, amount); //transfer BUSD to msg.sender
+            ERC20Interface.transfer(msg.sender, _fundUser[msg.sender].amountBUSD); //transfer BUSD to msg.sender
+            ERC20tokenIGO.transfer(address(this), _fundUser[msg.sender].amountIGOToken);
+            
         } else if (getWhitelist(2, msg.sender)) {
             require(
                 buyInTwoTier[msg.sender] >= amount,
