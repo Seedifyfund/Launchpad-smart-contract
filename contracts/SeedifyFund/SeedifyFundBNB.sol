@@ -22,7 +22,7 @@ contract SeedifyFundsContract is Ownable {
     uint256 public totalparticipants; // total participants in ido
     address payable public projectOwner; // project Owner
 
-        // max cap per tier
+    // max cap per tier
     uint256[9] public tiersMaxCap;
 
     //total users per tier
@@ -97,7 +97,7 @@ contract SeedifyFundsContract is Ownable {
         saleEndTime = _saleEndTime;
 
         projectOwner = _projectOwner;
-        
+
         for (uint256 i = 0; i < 9; i++) {
             tiersMaxCap[i] = _tiersValue[i];
         }
@@ -130,9 +130,10 @@ contract SeedifyFundsContract is Ownable {
     }
 
     // function to update the tiers value manually
-    function updateTierValues(
-        uint256[9] memory _tiersValue
-    ) external onlyOwner {
+    function updateTierValues(uint256[9] memory _tiersValue)
+        external
+        onlyOwner
+    {
         for (uint256 i = 0; i < 9; i++) {
             tiersMaxCap[i] = _tiersValue[i];
             maxAllocaPerUserInTiers[i] = tiersMaxCap[i] / totalUserInTiers[i];
@@ -140,9 +141,10 @@ contract SeedifyFundsContract is Ownable {
     }
 
     // function to update the tiers users value manually
-    function updateTierUsersValue(
-        uint256[9] memory _tiersUsersValue
-    ) external onlyOwner {
+    function updateTierUsersValue(uint256[9] memory _tiersUsersValue)
+        external
+        onlyOwner
+    {
         for (uint256 i = 0; i < 9; i++) {
             totalUserInTiers[i] = _tiersUsersValue[i];
             maxAllocaPerUserInTiers[i] = tiersMaxCap[i] / totalUserInTiers[i];
@@ -227,7 +229,10 @@ contract SeedifyFundsContract is Ownable {
 
     // send bnb to the contract address
     receive() external payable {
-        require(block.timestamp >= saleStartTime, "The sale is not started yet "); // solhint-disable
+        require(
+            block.timestamp >= saleStartTime,
+            "The sale is not started yet "
+        ); // solhint-disable
         require(block.timestamp <= saleEndTime, "The sale is closed"); // solhint-disable
         require(
             totalBnbReceivedInAllTier + msg.value <= maxCap,
@@ -245,7 +250,8 @@ contract SeedifyFundsContract is Ownable {
                 "buyTokens: purchase would exceed Tier one max cap"
             );
             require(
-                buyInOneTier[msg.sender] + msg.value <= maxAllocaPerUserInTiers[0],
+                buyInOneTier[msg.sender] + msg.value <=
+                    maxAllocaPerUserInTiers[0],
                 "buyTokens:You are investing more than your tier-1 limit!"
             );
 
@@ -264,7 +270,8 @@ contract SeedifyFundsContract is Ownable {
                 "buyTokens: purchase would exceed Tier two max cap"
             );
             require(
-                buyInTwoTier[msg.sender] + msg.value <= maxAllocaPerUserInTiers[1],
+                buyInTwoTier[msg.sender] + msg.value <=
+                    maxAllocaPerUserInTiers[1],
                 "buyTokens:You are investing more than your tier-2 limit!"
             );
 
@@ -279,7 +286,8 @@ contract SeedifyFundsContract is Ownable {
                 "your purchasing Power is so Low"
             );
             require(
-                buyInThreeTier[msg.sender] + msg.value <= maxAllocaPerUserInTiers[2],
+                buyInThreeTier[msg.sender] + msg.value <=
+                    maxAllocaPerUserInTiers[2],
                 "buyTokens:You are investing more than your tier-3 limit!"
             );
             require(
@@ -302,7 +310,8 @@ contract SeedifyFundsContract is Ownable {
                 "buyTokens: purchase would exceed Tier Four max cap"
             );
             require(
-                buyInFourTier[msg.sender] + msg.value <= maxAllocaPerUserInTiers[3],
+                buyInFourTier[msg.sender] + msg.value <=
+                    maxAllocaPerUserInTiers[3],
                 "buyTokens:You are investing more than your tier-4 limit!"
             );
             buyInFourTier[msg.sender] += msg.value;
@@ -320,7 +329,8 @@ contract SeedifyFundsContract is Ownable {
                 "buyTokens: purchase would exceed Tier Five max cap"
             );
             require(
-                buyInFiveTier[msg.sender] + msg.value <= maxAllocaPerUserInTiers[4],
+                buyInFiveTier[msg.sender] + msg.value <=
+                    maxAllocaPerUserInTiers[4],
                 "buyTokens:You are investing more than your tier-5 limit!"
             );
             buyInFiveTier[msg.sender] += msg.value;
@@ -338,7 +348,8 @@ contract SeedifyFundsContract is Ownable {
                 "buyTokens: purchase would exceed Tier Six max cap"
             );
             require(
-                buyInSixTier[msg.sender] + msg.value <= maxAllocaPerUserInTiers[5],
+                buyInSixTier[msg.sender] + msg.value <=
+                    maxAllocaPerUserInTiers[5],
                 "buyTokens:You are investing more than your tier-6 limit!"
             );
             buyInSixTier[msg.sender] += msg.value;
@@ -356,7 +367,8 @@ contract SeedifyFundsContract is Ownable {
                 "buyTokens: purchase would exceed Tier Seven max cap"
             );
             require(
-                buyInSevenTier[msg.sender] + msg.value <= maxAllocaPerUserInTiers[6],
+                buyInSevenTier[msg.sender] + msg.value <=
+                    maxAllocaPerUserInTiers[6],
                 "buyTokens:You are investing more than your tier-7 limit!"
             );
             buyInSevenTier[msg.sender] += msg.value;
@@ -374,7 +386,8 @@ contract SeedifyFundsContract is Ownable {
                 "buyTokens: purchase would exceed Tier Eight max cap"
             );
             require(
-                buyInEightTier[msg.sender] + msg.value <= maxAllocaPerUserInTiers[7],
+                buyInEightTier[msg.sender] + msg.value <=
+                    maxAllocaPerUserInTiers[7],
                 "buyTokens:You are investing more than your tier-8 limit!"
             );
             buyInEightTier[msg.sender] += msg.value;
@@ -392,7 +405,8 @@ contract SeedifyFundsContract is Ownable {
                 "buyTokens: purchase would exceed Tier Nine max cap"
             );
             require(
-                buyInNineTier[msg.sender] + msg.value <= maxAllocaPerUserInTiers[8],
+                buyInNineTier[msg.sender] + msg.value <=
+                    maxAllocaPerUserInTiers[8],
                 "buyTokens:You are investing more than your tier-9 limit!"
             );
             buyInNineTier[msg.sender] += msg.value;

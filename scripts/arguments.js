@@ -13,5 +13,6 @@ module.exports = [
         800000000000000000000n,
         900000000000000000000n], // _tiersValue
     100, // _totalparticipants
-    "0xeD24FC36d5Ee211Ea25A80239Fb8C4Cfd80f12Ee" // _tokenAddress
+    "0xeD24FC36d5Ee211Ea25A80239Fb8C4Cfd80f12Ee", // _tokenAddress
+    "0x97b2a21b235c5F53b797C043c7Ac947Fa09D8637" // _IGOTokenAddress
 ];

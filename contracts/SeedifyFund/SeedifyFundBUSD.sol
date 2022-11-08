@@ -129,7 +129,7 @@ contract SeedifyFundsContract is Ownable {
         }
 
         totalparticipants = _totalparticipants;
-        refundThresholdTime = 86400; // 24 hours in seconds
+        refundThresholdTime = block.timestamp + 86400; // 24 hours in seconds
         tokensPerBUSD = 10;
 
         require(_tokenAddress != address(0), "Zero token address"); //Adding token to the contract
@@ -451,6 +451,171 @@ contract SeedifyFundsContract is Ownable {
             revert("Not whitelisted");
         }
         return true;
+    }
+
+    function refund(uint256 tokens) public {
+        require(block.timestamp < refundThresholdTime, "Refund not allowed");
+
+        require(tokens > 0, "You need to send at least some tokens");
+        uint256 allowance = IGOTokenInterface.allowance(
+            msg.sender,
+            address(this)
+        );
+        require(
+            allowance >= tokens,
+            "IGOTokenInterface: Check the token allowance"
+        );
+
+        uint256 amount = tokens / tokensPerBUSD;
+
+        uint256 balance = ERC20Interface.balanceOf(projectOwner);
+        require(balance > amount, "Insufficient Balance");
+
+        uint256 ownerAllowance = ERC20Interface.allowance(
+            projectOwner,
+            address(this)
+        );
+        require(
+            ownerAllowance >= amount,
+            "ERC20Interface: Check the amount allowance"
+        );
+
+        if (getWhitelist(1, msg.sender)) {
+            require(
+                buyInOneTier[msg.sender] >= amount,
+                "your refunding Power is so Low"
+            );
+
+            buyInOneTier[msg.sender] -= amount;
+            totalBUSDReceivedInAllTier -= amount;
+            totalBUSDInTiers[0] -= amount;
+            IGOTokenInterface.safeTransferFrom(
+                msg.sender,
+                projectOwner,
+                tokens
+            ); //transfer tokens to owner
+            ERC20Interface.safeTransferFrom(projectOwner, msg.sender, amount); //transfer BUSD to msg.sender
+        } else if (getWhitelist(2, msg.sender)) {
+            require(
+                buyInTwoTier[msg.sender] >= amount,
+                "your refunding Power is so Low"
+            );
+
+            buyInTwoTier[msg.sender] -= amount;
+            totalBUSDReceivedInAllTier -= amount;
+            totalBUSDInTiers[1] -= amount;
+            IGOTokenInterface.safeTransferFrom(
+                msg.sender,
+                projectOwner,
+                tokens
+            ); //transfer tokens to owner
+            ERC20Interface.safeTransferFrom(projectOwner, msg.sender, amount); //transfer BUSD to msg.sender
+        } else if (getWhitelist(3, msg.sender)) {
+            require(
+                buyInThreeTier[msg.sender] >= amount,
+                "your refunding Power is so Low"
+            );
+
+            buyInThreeTier[msg.sender] -= amount;
+            totalBUSDReceivedInAllTier -= amount;
+            totalBUSDInTiers[2] -= amount;
+            IGOTokenInterface.safeTransferFrom(
+                msg.sender,
+                projectOwner,
+                tokens
+            ); //transfer tokens to owner
+            ERC20Interface.safeTransferFrom(projectOwner, msg.sender, amount); //transfer BUSD to msg.sender
+        } else if (getWhitelist(4, msg.sender)) {
+            require(
+                buyInFourTier[msg.sender] >= amount,
+                "your refunding Power is so Low"
+            );
+
+            buyInFourTier[msg.sender] -= amount;
+            totalBUSDReceivedInAllTier -= amount;
+            totalBUSDInTiers[3] -= amount;
+            IGOTokenInterface.safeTransferFrom(
+                msg.sender,
+                projectOwner,
+                tokens
+            ); //transfer tokens to owner
+            ERC20Interface.safeTransferFrom(projectOwner, msg.sender, amount); //transfer BUSD to msg.sender
+        } else if (getWhitelist(5, msg.sender)) {
+            require(
+                buyInFiveTier[msg.sender] >= amount,
+                "your refunding Power is so Low"
+            );
+
+            buyInFiveTier[msg.sender] -= amount;
+            totalBUSDReceivedInAllTier -= amount;
+            totalBUSDInTiers[4] -= amount;
+            IGOTokenInterface.safeTransferFrom(
+                msg.sender,
+                projectOwner,
+                tokens
+            ); //transfer tokens to owner
+            ERC20Interface.safeTransferFrom(projectOwner, msg.sender, amount); //transfer BUSD to msg.sender
+        } else if (getWhitelist(6, msg.sender)) {
+            require(
+                buyInSixTier[msg.sender] >= amount,
+                "your refunding Power is so Low"
+            );
+
+            buyInSixTier[msg.sender] -= amount;
+            totalBUSDReceivedInAllTier -= amount;
+            totalBUSDInTiers[5] -= amount;
+            IGOTokenInterface.safeTransferFrom(
+                msg.sender,
+                projectOwner,
+                tokens
+            ); //transfer tokens to owner
+            ERC20Interface.safeTransferFrom(projectOwner, msg.sender, amount); //transfer BUSD to msg.sender
+        } else if (getWhitelist(7, msg.sender)) {
+            require(
+                buyInSevenTier[msg.sender] >= amount,
+                "your refunding Power is so Low"
+            );
+
+            buyInSevenTier[msg.sender] -= amount;
+            totalBUSDReceivedInAllTier -= amount;
+            totalBUSDInTiers[6] -= amount;
+            IGOTokenInterface.safeTransferFrom(
+                msg.sender,
+                projectOwner,
+                tokens
+            ); //transfer tokens to owner
+            ERC20Interface.safeTransferFrom(projectOwner, msg.sender, amount); //transfer BUSD to msg.sender
+        } else if (getWhitelist(8, msg.sender)) {
+            require(
+                buyInEightTier[msg.sender] >= amount,
+                "your refunding Power is so Low"
+            );
+
+            buyInEightTier[msg.sender] -= amount;
+            totalBUSDReceivedInAllTier -= amount;
+            totalBUSDInTiers[7] -= amount;
+            IGOTokenInterface.safeTransferFrom(
+                msg.sender,
+                projectOwner,
+                tokens
+            ); //transfer tokens to owner
+            ERC20Interface.safeTransferFrom(projectOwner, msg.sender, amount); //transfer BUSD to msg.sender
+        } else if (getWhitelist(9, msg.sender)) {
+            require(
+                buyInNineTier[msg.sender] >= amount,
+                "your refunding Power is so Low"
+            );
+
+            buyInNineTier[msg.sender] -= amount;
+            totalBUSDReceivedInAllTier -= amount;
+            totalBUSDInTiers[8] -= amount;
+            IGOTokenInterface.safeTransferFrom(
+                msg.sender,
+                projectOwner,
+                tokens
+            ); //transfer tokens to owner
+            ERC20Interface.safeTransferFrom(projectOwner, msg.sender, amount); //transfer BUSD to msg.sender
+        }
     }
 
     function setTokensPerBUSD(uint256 _tokensPerBUSD) public onlyOwner {
