@@ -18,20 +18,21 @@ async function main() {
   const Seedify = await hre.ethers.getContractFactory("contracts/SeedifyFund/SeedifyFundBUSD.sol:SeedifyFundsContract");
   const seedify = await Seedify.deploy(
     10000000000000000000000n, // _maxCap
-    1666596376, // _saleStartTime
-    1669274776, // _saleEndTime
+    1667912083, // _saleStartTime
+    1670504112, // _saleEndTime
     "0xd733Dea83fFf749aEa99bbA541F6F1157A9Cb588", // _projectOwner
     [100000000000000000000n,
-    200000000000000000000n,
-    300000000000000000000n,
-    400000000000000000000n,
-    500000000000000000000n,
-    600000000000000000000n,
-    700000000000000000000n,
-    800000000000000000000n,
-    900000000000000000000n], // _tiersValue
+      200000000000000000000n,
+      300000000000000000000n,
+      400000000000000000000n,
+      500000000000000000000n,
+      600000000000000000000n,
+      700000000000000000000n,
+      800000000000000000000n,
+      900000000000000000000n], // _tiersValue
     100, // _totalparticipants
-    "0xeD24FC36d5Ee211Ea25A80239Fb8C4Cfd80f12Ee" // _tokenAddress
+    "0xC2e047e7648d4A2107431b356090F5Ed8BBfeb99", // _tokenAddress
+    "0x97b2a21b235c5F53b797C043c7Ac947Fa09D8637" // _IGOTokenAddress
   );
 
   await seedify.deployed();
