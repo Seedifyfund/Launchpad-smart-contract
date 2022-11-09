@@ -78,7 +78,7 @@ contract SeedifyFundsContract is Ownable {
         uint256 amountIGOToken;
     }
 
-    mapping(address => fundUser) public fundUser;
+    mapping(address => FundUser) public fundUser;
 
     //mapping the user purchase per tier
     mapping(address => uint256) public buyInOneTier;
@@ -232,8 +232,8 @@ contract SeedifyFundsContract is Ownable {
         require(
             block.timestamp >= saleStartTime,
             "The sale is not started yet "
-        ); // solhint-disable
-        require(block.timestamp <= saleEndTime, "The sale is closed"); // solhint-disable
+        );
+        require(block.timestamp <= saleEndTime, "The sale is closed");
         require(
             totalBUSDReceivedInAllTier + amount <= maxCap,
             "buyTokens: purchase would exceed max cap"
