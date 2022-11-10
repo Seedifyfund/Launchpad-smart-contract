@@ -76,6 +76,7 @@ contract SeedifyFundsContract is Ownable {
     struct FundUser {
         uint256 amountBUSD;
         uint256 amountIGOToken;
+        uint256 fundTime;
     }
 
     mapping(address => FundUser) public fundUser;
@@ -494,10 +495,39 @@ contract SeedifyFundsContract is Ownable {
         FundUser memory staked = fundUser[msg.sender];
 
         uint256 balance = staked.amountBUSD;
-        uint256 balanceIGOToken = staked.amountBUSD;
+        uint256 balanceIGOToken = staked.amountIGOToken;
 
         require(balance > 0, "Insufficient Balance");
         require(balanceIGOToken > 0, "Insufficiente IGO Token Balance");
+
+        
+   
+         uint256 allowance = IGOTokenInterface.allowance(
+            msg.sender,
+            address(this)
+            
+        );
+        require(
+            balanceIGOToken <= allowance,
+            "Make sure to have enough allowance from owner to contract"
+        );
+
+
+        uint256 allowanceBUSD = ERC20Interface.allowance(
+            address(this),
+            projectOwner
+            
+        );
+        require(
+            balance <= allowanceBUSD,
+            "Make sure to have enough allowance from owner to contract"
+        );
+
+
+        uint256 ownerBalance = ERC20Interface.balanceOf(projectOwner);
+        require(ownerBalance >= balance, "Owner has insufficient tokens");
+
+
 
         if (getWhitelist(1, msg.sender)) {
             require(
