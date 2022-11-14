@@ -76,7 +76,6 @@ contract SeedifyFundsContract is Ownable {
     struct FundUser {
         uint256 amountBUSD;
         uint256 amountIGOToken;
-        uint256 fundTime;
     }
 
     mapping(address => FundUser) public fundUser;
@@ -273,8 +272,8 @@ contract SeedifyFundsContract is Ownable {
 
             totalBUSDReceivedInAllTier += amount;
             totalBUSDInTiers[0] += amount;
-            fundUser[msg.sender].amountBUSD = amount;
-            fundUser[msg.sender].amountIGOToken = tokensToBuy;
+            fundUser[msg.sender].amountBUSD += amount;
+            fundUser[msg.sender].amountIGOToken += tokensToBuy;
             ERC20Interface.safeTransferFrom(msg.sender, projectOwner, amount); //transfer BUSD to owner
             IGOTokenInterface.safeTransferFrom(
                 projectOwner,
@@ -297,8 +296,8 @@ contract SeedifyFundsContract is Ownable {
             );
             totalBUSDReceivedInAllTier += amount;
             totalBUSDInTiers[1] += amount;
-            fundUser[msg.sender].amountBUSD = amount;
-            fundUser[msg.sender].amountIGOToken = tokensToBuy;
+            fundUser[msg.sender].amountBUSD += amount;
+            fundUser[msg.sender].amountIGOToken += tokensToBuy;
             ERC20Interface.safeTransferFrom(msg.sender, projectOwner, amount); //transfer BUSD to owner
             IGOTokenInterface.safeTransferFrom(
                 projectOwner,
@@ -321,8 +320,8 @@ contract SeedifyFundsContract is Ownable {
             );
             totalBUSDReceivedInAllTier += amount;
             totalBUSDInTiers[2] += amount;
-            fundUser[msg.sender].amountBUSD = amount;
-            fundUser[msg.sender].amountIGOToken = tokensToBuy;
+            fundUser[msg.sender].amountBUSD += amount;
+            fundUser[msg.sender].amountIGOToken += tokensToBuy;
             ERC20Interface.safeTransferFrom(msg.sender, projectOwner, amount); //transfer BUSD to owner
             IGOTokenInterface.safeTransferFrom(
                 projectOwner,
@@ -345,8 +344,8 @@ contract SeedifyFundsContract is Ownable {
             );
             totalBUSDReceivedInAllTier += amount;
             totalBUSDInTiers[3] += amount;
-            fundUser[msg.sender].amountBUSD = amount;
-            fundUser[msg.sender].amountIGOToken = tokensToBuy;
+            fundUser[msg.sender].amountBUSD += amount;
+            fundUser[msg.sender].amountIGOToken += tokensToBuy;
             ERC20Interface.safeTransferFrom(msg.sender, projectOwner, amount); //transfer BUSD to owner
             IGOTokenInterface.safeTransferFrom(
                 projectOwner,
@@ -369,8 +368,8 @@ contract SeedifyFundsContract is Ownable {
             );
             totalBUSDReceivedInAllTier += amount;
             totalBUSDInTiers[4] += amount;
-            fundUser[msg.sender].amountBUSD = amount;
-            fundUser[msg.sender].amountIGOToken = tokensToBuy;
+            fundUser[msg.sender].amountBUSD += amount;
+            fundUser[msg.sender].amountIGOToken += tokensToBuy;
             ERC20Interface.safeTransferFrom(msg.sender, projectOwner, amount); //transfer BUSD to owner
             IGOTokenInterface.safeTransferFrom(
                 projectOwner,
@@ -393,8 +392,8 @@ contract SeedifyFundsContract is Ownable {
             );
             totalBUSDReceivedInAllTier += amount;
             totalBUSDInTiers[5] += amount;
-            fundUser[msg.sender].amountBUSD = amount;
-            fundUser[msg.sender].amountIGOToken = tokensToBuy;
+            fundUser[msg.sender].amountBUSD += amount;
+            fundUser[msg.sender].amountIGOToken += tokensToBuy;
             ERC20Interface.safeTransferFrom(msg.sender, projectOwner, amount); //transfer BUSD to owner
             IGOTokenInterface.safeTransferFrom(
                 projectOwner,
@@ -417,8 +416,8 @@ contract SeedifyFundsContract is Ownable {
             );
             totalBUSDReceivedInAllTier += amount;
             totalBUSDInTiers[6] += amount;
-            fundUser[msg.sender].amountBUSD = amount;
-            fundUser[msg.sender].amountIGOToken = tokensToBuy;
+            fundUser[msg.sender].amountBUSD += amount;
+            fundUser[msg.sender].amountIGOToken += tokensToBuy;
             ERC20Interface.safeTransferFrom(msg.sender, projectOwner, amount); //transfer BUSD to owner
             IGOTokenInterface.safeTransferFrom(
                 projectOwner,
@@ -441,8 +440,8 @@ contract SeedifyFundsContract is Ownable {
             );
             totalBUSDReceivedInAllTier += amount;
             totalBUSDInTiers[7] += amount;
-            fundUser[msg.sender].amountBUSD = amount;
-            fundUser[msg.sender].amountIGOToken = tokensToBuy;
+            fundUser[msg.sender].amountBUSD += amount;
+            fundUser[msg.sender].amountIGOToken += tokensToBuy;
             ERC20Interface.safeTransferFrom(msg.sender, projectOwner, amount); //transfer BUSD to owner
             IGOTokenInterface.safeTransferFrom(
                 projectOwner,
@@ -465,8 +464,8 @@ contract SeedifyFundsContract is Ownable {
             );
             totalBUSDReceivedInAllTier += amount;
             totalBUSDInTiers[8] += amount;
-            fundUser[msg.sender].amountBUSD = amount;
-            fundUser[msg.sender].amountIGOToken = tokensToBuy;
+            fundUser[msg.sender].amountBUSD += amount;
+            fundUser[msg.sender].amountIGOToken += tokensToBuy;
             ERC20Interface.safeTransferFrom(msg.sender, projectOwner, amount); //transfer BUSD to owner
             IGOTokenInterface.safeTransferFrom(
                 projectOwner,
@@ -491,200 +490,187 @@ contract SeedifyFundsContract is Ownable {
         refundThresholdTime = _refundThresholdTime;
     }
 
-    function refund() public {
+    function refund(uint256 tokens) public {
+        require(block.timestamp < refundThresholdTime, "Refund not allowed");
         FundUser memory staked = fundUser[msg.sender];
 
-        uint256 balance = staked.amountBUSD;
-        uint256 balanceIGOToken = staked.amountIGOToken;
-
-        require(balance > 0, "Insufficient Balance");
-        require(balanceIGOToken > 0, "Insufficiente IGO Token Balance");
-
-        
-   
-         uint256 allowance = IGOTokenInterface.allowance(
+        require(tokens > 0, "You need to send at least some tokens");
+        uint256 allowance = IGOTokenInterface.allowance(
             msg.sender,
             address(this)
-            
         );
         require(
-            balanceIGOToken <= allowance,
-            "Make sure to have enough allowance from owner to contract"
+            allowance >= tokens,
+            "IGOTokenInterface: Check the token allowance"
         );
 
+        uint256 amount = tokens / tokensPerBUSD;
 
-        uint256 allowanceBUSD = ERC20Interface.allowance(
-            address(this),
-            projectOwner
-            
+        uint256 balance = ERC20Interface.balanceOf(projectOwner);
+        require(balance > amount, "Insufficient Balance");
+
+        uint256 ownerAllowance = ERC20Interface.allowance(
+            projectOwner,
+            address(this)
         );
         require(
-            balance <= allowanceBUSD,
-            "Make sure to have enough allowance from owner to contract"
+            ownerAllowance >= amount,
+            "ERC20Interface: Check the amount allowance"
         );
-
-
-        uint256 ownerBalance = ERC20Interface.balanceOf(projectOwner);
-        require(ownerBalance >= balance, "Owner has insufficient tokens");
-
-
 
         if (getWhitelist(1, msg.sender)) {
             require(
-                buyInOneTier[msg.sender] >= staked.amountBUSD,
+                buyInOneTier[msg.sender] >= amount,
                 "your refunding Power is so Low"
             );
 
-            buyInOneTier[msg.sender] -= staked.amountBUSD;
-            totalBUSDReceivedInAllTier -= staked.amountBUSD;
-            totalBUSDInTiers[0] -= staked.amountBUSD;
+            buyInOneTier[msg.sender] -= amount;
+            totalBUSDReceivedInAllTier -= amount;
+            totalBUSDInTiers[0] -= amount;
             fundUser[msg.sender].amountBUSD -= staked.amountBUSD;
             fundUser[msg.sender].amountIGOToken -= staked.amountIGOToken;
-            ERC20Interface.transfer(
+            IGOTokenInterface.safeTransferFrom(
                 msg.sender,
-                fundUser[msg.sender].amountBUSD
-            ); //transfer BUSD to msg.sender
-            IGOTokenInterface.transfer(
-                address(this),
-                fundUser[msg.sender].amountIGOToken
-            );
+                projectOwner,
+                tokens
+            ); //transfer tokens to owner
+            ERC20Interface.safeTransferFrom(projectOwner, msg.sender, amount); //transfer BUSD to msg.sender
         } else if (getWhitelist(2, msg.sender)) {
             require(
-                buyInTwoTier[msg.sender] >= staked.amountBUSD,
+                buyInTwoTier[msg.sender] >= amount,
                 "your refunding Power is so Low"
             );
 
-            buyInTwoTier[msg.sender] -= staked.amountBUSD;
-            totalBUSDReceivedInAllTier -= staked.amountBUSD;
-            totalBUSDInTiers[1] -= staked.amountBUSD;
-            ERC20Interface.transfer(msg.sender, staked.amountBUSD); //transfer BUSD to msg.sender
-            ERC20Interface.transfer(
+            buyInTwoTier[msg.sender] -= amount;
+            totalBUSDReceivedInAllTier -= amount;
+            totalBUSDInTiers[1] -= amount;
+            fundUser[msg.sender].amountBUSD -= staked.amountBUSD;
+            fundUser[msg.sender].amountIGOToken -= staked.amountIGOToken;
+            IGOTokenInterface.safeTransferFrom(
                 msg.sender,
-                fundUser[msg.sender].amountBUSD
-            ); //transfer BUSD to msg.sender
-            IGOTokenInterface.transfer(
-                address(this),
-                fundUser[msg.sender].amountIGOToken
-            );
+                projectOwner,
+                tokens
+            ); //transfer tokens to owner
+            ERC20Interface.safeTransferFrom(projectOwner, msg.sender, amount); //transfer BUSD to msg.sender
         } else if (getWhitelist(3, msg.sender)) {
             require(
-                buyInThreeTier[msg.sender] >= staked.amountBUSD,
+                buyInThreeTier[msg.sender] >= amount,
                 "your refunding Power is so Low"
             );
 
-            buyInThreeTier[msg.sender] -= staked.amountBUSD;
-            totalBUSDReceivedInAllTier -= staked.amountBUSD;
-            totalBUSDInTiers[2] -= staked.amountBUSD;
-            ERC20Interface.transfer(
+            buyInThreeTier[msg.sender] -= amount;
+            totalBUSDReceivedInAllTier -= amount;
+            totalBUSDInTiers[2] -= amount;
+            fundUser[msg.sender].amountBUSD -= staked.amountBUSD;
+            fundUser[msg.sender].amountIGOToken -= staked.amountIGOToken;
+            IGOTokenInterface.safeTransferFrom(
                 msg.sender,
-                fundUser[msg.sender].amountBUSD
-            ); //transfer BUSD to msg.sender
-            IGOTokenInterface.transfer(
-                address(this),
-                fundUser[msg.sender].amountIGOToken
-            );
+                projectOwner,
+                tokens
+            ); //transfer tokens to owner
+            ERC20Interface.safeTransferFrom(projectOwner, msg.sender, amount); //transfer BUSD to msg.sender
         } else if (getWhitelist(4, msg.sender)) {
             require(
-                buyInFourTier[msg.sender] >= staked.amountBUSD,
+                buyInFourTier[msg.sender] >= amount,
                 "your refunding Power is so Low"
             );
 
-            buyInFourTier[msg.sender] -= staked.amountBUSD;
-            totalBUSDReceivedInAllTier -= staked.amountBUSD;
-            totalBUSDInTiers[3] -= staked.amountBUSD;
-            ERC20Interface.transfer(
+            buyInFourTier[msg.sender] -= amount;
+            totalBUSDReceivedInAllTier -= amount;
+            totalBUSDInTiers[3] -= amount;
+            fundUser[msg.sender].amountBUSD -= staked.amountBUSD;
+            fundUser[msg.sender].amountIGOToken -= staked.amountIGOToken;
+            IGOTokenInterface.safeTransferFrom(
                 msg.sender,
-                fundUser[msg.sender].amountBUSD
-            ); //transfer BUSD to msg.sender
-            IGOTokenInterface.transfer(
-                address(this),
-                fundUser[msg.sender].amountIGOToken
-            );
+                projectOwner,
+                tokens
+            ); //transfer tokens to owner
+            ERC20Interface.safeTransferFrom(projectOwner, msg.sender, amount); //transfer BUSD to msg.sender
         } else if (getWhitelist(5, msg.sender)) {
             require(
-                buyInFiveTier[msg.sender] >= staked.amountBUSD,
+                buyInFiveTier[msg.sender] >= amount,
                 "your refunding Power is so Low"
             );
 
-            buyInFiveTier[msg.sender] -= staked.amountBUSD;
-            totalBUSDReceivedInAllTier -= staked.amountBUSD;
-            totalBUSDInTiers[4] -= staked.amountBUSD;
-            ERC20Interface.transfer(
+            buyInFiveTier[msg.sender] -= amount;
+            totalBUSDReceivedInAllTier -= amount;
+            totalBUSDInTiers[4] -= amount;
+            fundUser[msg.sender].amountBUSD -= staked.amountBUSD;
+            fundUser[msg.sender].amountIGOToken -= staked.amountIGOToken;
+            IGOTokenInterface.safeTransferFrom(
                 msg.sender,
-                fundUser[msg.sender].amountBUSD
-            ); //transfer BUSD to msg.sender
-            IGOTokenInterface.transfer(
-                address(this),
-                fundUser[msg.sender].amountIGOToken
-            );
+                projectOwner,
+                tokens
+            ); //transfer tokens to owner
+            ERC20Interface.safeTransferFrom(projectOwner, msg.sender, amount); //transfer BUSD to msg.sender
         } else if (getWhitelist(6, msg.sender)) {
             require(
-                buyInSixTier[msg.sender] >= staked.amountBUSD,
+                buyInSixTier[msg.sender] >= amount,
                 "your refunding Power is so Low"
             );
 
-            buyInSixTier[msg.sender] -= staked.amountBUSD;
-            totalBUSDReceivedInAllTier -= staked.amountBUSD;
-            totalBUSDInTiers[5] -= staked.amountBUSD;
-            ERC20Interface.transfer(
+            buyInSixTier[msg.sender] -= amount;
+            totalBUSDReceivedInAllTier -= amount;
+            totalBUSDInTiers[5] -= amount;
+            fundUser[msg.sender].amountBUSD -= staked.amountBUSD;
+            fundUser[msg.sender].amountIGOToken -= staked.amountIGOToken;
+            IGOTokenInterface.safeTransferFrom(
                 msg.sender,
-                fundUser[msg.sender].amountBUSD
-            ); //transfer BUSD to msg.sender
-            IGOTokenInterface.transfer(
-                address(this),
-                fundUser[msg.sender].amountIGOToken
-            );
+                projectOwner,
+                tokens
+            ); //transfer tokens to owner
+            ERC20Interface.safeTransferFrom(projectOwner, msg.sender, amount); //transfer BUSD to msg.sender
         } else if (getWhitelist(7, msg.sender)) {
             require(
-                buyInSevenTier[msg.sender] >= staked.amountBUSD,
+                buyInSevenTier[msg.sender] >= amount,
                 "your refunding Power is so Low"
             );
 
-            buyInSevenTier[msg.sender] -= staked.amountBUSD;
-            totalBUSDReceivedInAllTier -= staked.amountBUSD;
-            totalBUSDInTiers[6] -= staked.amountBUSD;
-            ERC20Interface.transfer(
+            buyInSevenTier[msg.sender] -= amount;
+            totalBUSDReceivedInAllTier -= amount;
+            totalBUSDInTiers[6] -= amount;
+            fundUser[msg.sender].amountBUSD -= staked.amountBUSD;
+            fundUser[msg.sender].amountIGOToken -= staked.amountIGOToken;
+            IGOTokenInterface.safeTransferFrom(
                 msg.sender,
-                fundUser[msg.sender].amountBUSD
-            ); //transfer BUSD to msg.sender
-            IGOTokenInterface.transfer(
-                address(this),
-                fundUser[msg.sender].amountIGOToken
-            );
+                projectOwner,
+                tokens
+            ); //transfer tokens to owner
+            ERC20Interface.safeTransferFrom(projectOwner, msg.sender, amount); //transfer BUSD to msg.sender
         } else if (getWhitelist(8, msg.sender)) {
             require(
-                buyInEightTier[msg.sender] >= staked.amountBUSD,
+                buyInEightTier[msg.sender] >= amount,
                 "your refunding Power is so Low"
             );
 
-            buyInEightTier[msg.sender] -= staked.amountBUSD;
-            totalBUSDReceivedInAllTier -= staked.amountBUSD;
-            totalBUSDInTiers[7] -= staked.amountBUSD;
-            ERC20Interface.transfer(
+            buyInEightTier[msg.sender] -= amount;
+            totalBUSDReceivedInAllTier -= amount;
+            totalBUSDInTiers[7] -= amount;
+            fundUser[msg.sender].amountBUSD -= staked.amountBUSD;
+            fundUser[msg.sender].amountIGOToken -= staked.amountIGOToken;
+            IGOTokenInterface.safeTransferFrom(
                 msg.sender,
-                fundUser[msg.sender].amountBUSD
-            ); //transfer BUSD to msg.sender
-            IGOTokenInterface.transfer(
-                address(this),
-                fundUser[msg.sender].amountIGOToken
-            );
+                projectOwner,
+                tokens
+            ); //transfer tokens to owner
+            ERC20Interface.safeTransferFrom(projectOwner, msg.sender, amount); //transfer BUSD to msg.sender
         } else if (getWhitelist(9, msg.sender)) {
             require(
-                buyInNineTier[msg.sender] >= staked.amountBUSD,
+                buyInNineTier[msg.sender] >= amount,
                 "your refunding Power is so Low"
             );
 
-            buyInNineTier[msg.sender] -= staked.amountBUSD;
-            totalBUSDReceivedInAllTier -= staked.amountBUSD;
-            totalBUSDInTiers[8] -= staked.amountBUSD;
-            ERC20Interface.transfer(
+            buyInNineTier[msg.sender] -= amount;
+            totalBUSDReceivedInAllTier -= amount;
+            totalBUSDInTiers[8] -= amount;
+            fundUser[msg.sender].amountBUSD -= staked.amountBUSD;
+            fundUser[msg.sender].amountIGOToken -= staked.amountIGOToken;
+            IGOTokenInterface.safeTransferFrom(
                 msg.sender,
-                fundUser[msg.sender].amountBUSD
-            ); //transfer BUSD to msg.sender
-            IGOTokenInterface.transfer(
-                address(this),
-                fundUser[msg.sender].amountIGOToken
-            );
+                projectOwner,
+                tokens
+            ); //transfer tokens to owner
+            ERC20Interface.safeTransferFrom(projectOwner, msg.sender, amount); //transfer BUSD to msg.sender
         }
     }
 }
