@@ -298,19 +298,59 @@ contract SeedifyFundsContract is Ownable {
             "Make sure to add enough allowance from owner to contract"
         );
 
+        uint256 buyInTierAmount;
+
         if (getWhitelist(tier, msg.sender)) {
-            buyInOneTier[msg.sender] += amount;
+            if (tier == 1) {
+                buyInOneTier[msg.sender] += amount;
+                buyInTierAmount = buyInOneTier[msg.sender];
+            }
+            else if (tier == 2) {
+                buyInTwoTier[msg.sender] += amount;
+                buyInTierAmount = buyInTwoTier[msg.sender];
+            }
+            else if (tier == 3) {
+                buyInThreeTier[msg.sender] += amount;
+                buyInTierAmount = buyInThreeTier[msg.sender];
+            }
+            else if (tier == 4) {
+                buyInFourTier[msg.sender] += amount;
+                buyInTierAmount = buyInFourTier[msg.sender];
+            }
+            else if (tier == 5) {
+                buyInFiveTier[msg.sender] += amount;
+                buyInTierAmount = buyInFiveTier[msg.sender];
+            }
+            else if (tier == 6) {
+                buyInSixTier[msg.sender] += amount;
+                buyInTierAmount = buyInSixTier[msg.sender];
+            }
+            else if (tier == 7) {
+                buyInSevenTier[msg.sender] += amount;
+                buyInTierAmount = buyInSevenTier[msg.sender];
+            }
+            else if (tier == 8) {
+                buyInEightTier[msg.sender] += amount;
+                buyInTierAmount = buyInEightTier[msg.sender];
+            }
+            else if (tier == 9) {
+                buyInNineTier[msg.sender] += amount;
+                buyInTierAmount = buyInNineTier[msg.sender];
+            }
+
             require(
-                buyInOneTier[msg.sender] >= minAllocaPerUserInTiers[tier - 1],
+                buyInTierAmount >= minAllocaPerUserInTiers[tier - 1],
                 "your purchasing Power is so Low"
             );
+
+            require(
+                buyInTierAmount <= maxAllocaPerUserInTiers[tier - 1],
+                "buyTokens:You are investing more than your tier limit!"
+            );
+
             require(
                 totalBUSDInTiers[tier - 1] + amount <= tiersMaxCap[tier - 1],
                 "buyTokens: purchase would exceed Tier one max cap"
-            );
-            require(
-                buyInOneTier[msg.sender] <= maxAllocaPerUserInTiers[tier - 1],
-                "buyTokens:You are investing more than your tier-1 limit!"
             );
 
             totalBUSDReceivedInAllTier += amount;
@@ -318,11 +358,7 @@ contract SeedifyFundsContract is Ownable {
             fundUser[msg.sender].amountBUSD += amount;
             fundUser[msg.sender].amountIGOToken += tokensToBuy;
             ERC20Interface.safeTransferFrom(msg.sender, projectOwner, amount); //transfer BUSD to owner
-            IGOTokenInterface.safeTransferFrom(
-                projectOwner,
-                msg.sender,
-                tokensToBuy
-            ); //transfer tokens to msg.sender
+            IGOTokenInterface.safeTransferFrom(projectOwner, msg.sender, tokensToBuy); //transfer tokens to msg.sender
         } else {
             revert("Not whitelisted");
         }
@@ -341,53 +377,73 @@ contract SeedifyFundsContract is Ownable {
         refundThresholdTime = _refundThresholdTime;
     }
 
-    function refund(uint256 tier, uint256 tokens) external {
-        require(tier >= 1 && tier <= 9, "Invalid Tier. Try (1-9)");
+    function refund() external {
         require(block.timestamp < refundThresholdTime, "Refund not allowed");
-        require(tokens > 0, "You need to send at least some tokens");
+        
+        uint256 tokens = fundUser[msg.sender].amountIGOToken;
+        require(tokens > 0, "Insufficient Tokens");
 
-        uint256 allowance = IGOTokenInterface.allowance(
-            msg.sender,
-            address(this)
-        );
-        require(
-            allowance >= tokens,
-            "IGOTokenInterface: Check the token allowance"
-        );
+        uint256 allowance = IGOTokenInterface.allowance(msg.sender,address(this));
+        require( allowance >= tokens, "IGOTokenInterface: Check the token allowance");
 
         uint256 amount = tokens / tokensPerBUSD;
 
         uint256 balance = ERC20Interface.balanceOf(projectOwner);
-        require(balance > amount, "Insufficient Balance");
+        require(balance >= amount, "Insufficient Balance");
 
-        uint256 ownerAllowance = ERC20Interface.allowance(
-            projectOwner,
-            address(this)
-        );
-        require(
-            ownerAllowance >= amount,
-            "ERC20Interface: Check the amount allowance"
-        );
+        uint256 ownerAllowance = ERC20Interface.allowance(projectOwner,address(this));
+        require(ownerAllowance >= amount, "ERC20Interface: Check the amount allowance");
 
-        if (getWhitelist(tier, msg.sender)) {
-            require(
-                buyInOneTier[msg.sender] >= amount,
-                "Your refunding power is so Low"
-            );
-
-            FundUser memory staked = fundUser[msg.sender];
-
-            buyInOneTier[msg.sender] -= amount;
-            totalBUSDReceivedInAllTier -= amount;
-            totalBUSDInTiers[tier - 1] -= amount;
-            fundUser[msg.sender].amountBUSD -= staked.amountBUSD;
-            fundUser[msg.sender].amountIGOToken -= staked.amountIGOToken;
-            IGOTokenInterface.safeTransferFrom(
-                msg.sender,
-                projectOwner,
-                tokens
-            ); //transfer tokens to owner
-            ERC20Interface.safeTransferFrom(projectOwner, msg.sender, amount); //transfer BUSD to msg.sender
+        if(buyInOneTier[msg.sender] > 0)
+        {
+            totalBUSDInTiers[0] -= buyInOneTier[msg.sender];
+            buyInOneTier[msg.sender] = 0;
         }
+        else if(buyInTwoTier[msg.sender] > 0)
+        {
+            totalBUSDInTiers[1] -= buyInTwoTier[msg.sender];
+            buyInTwoTier[msg.sender] = 0;
+        }
+        else if(buyInThreeTier[msg.sender] > 0)
+        {
+            totalBUSDInTiers[2] -= buyInThreeTier[msg.sender];
+            buyInThreeTier[msg.sender] = 0;
+        }
+        else if(buyInFourTier[msg.sender] > 0)
+        {
+            totalBUSDInTiers[3] -= buyInFourTier[msg.sender];
+            buyInFourTier[msg.sender] = 0;
+        }
+        else if(buyInFiveTier[msg.sender] > 0)
+        {
+            totalBUSDInTiers[4] -= buyInFiveTier[msg.sender];
+            buyInFiveTier[msg.sender] = 0;
+        }
+        else if(buyInSixTier[msg.sender] > 0)
+        {
+            totalBUSDInTiers[5] -= buyInSixTier[msg.sender];
+            buyInSixTier[msg.sender] = 0;
+        }
+        else if(buyInSevenTier[msg.sender] > 0)
+        {
+            totalBUSDInTiers[6] -= buyInSevenTier[msg.sender];
+            buyInSevenTier[msg.sender] = 0;
+        }
+        else if(buyInEightTier[msg.sender] > 0)
+        {
+            totalBUSDInTiers[7] -= buyInEightTier[msg.sender];
+            buyInEightTier[msg.sender] = 0;
+        }
+        else if(buyInNineTier[msg.sender] > 0)
+        {
+            totalBUSDInTiers[8] -= buyInNineTier[msg.sender];
+            buyInNineTier[msg.sender] = 0;
+        }
+        
+        totalBUSDReceivedInAllTier -= amount;
+        fundUser[msg.sender].amountBUSD = 0;
+        fundUser[msg.sender].amountIGOToken = 0;
+        IGOTokenInterface.safeTransferFrom(msg.sender,projectOwner,tokens); //transfer tokens to owner
+        ERC20Interface.safeTransferFrom(projectOwner, msg.sender, amount); //transfer BUSD to msg.sender
     }
 }
