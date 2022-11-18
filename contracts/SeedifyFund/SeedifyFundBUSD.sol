@@ -119,6 +119,7 @@ contract SeedifyFundsContract is Ownable {
         projectOwner = _projectOwner;
 
         for (uint256 i = 0; i < 9; i++) {
+            require(_tiersValue[i] > 0, "Zero tier value");
             tiersMaxCap[i] = _tiersValue[i];
         }
 
@@ -203,27 +204,35 @@ contract SeedifyFundsContract is Ownable {
     function addWhitelist(uint256 _tier, address _address) external onlyOwner {
         require(_tier >= 1 && _tier <= 9, "Invalid Tier. Try (1-9)");
         require(_address != address(0), "Invalid address");
-        require(
-            numberOfParticipants + 1 <= totalparticipants,
-            "Participants max limit reached"
-        );
-        require(
-            numberOfUserInTiers[_tier - 1] + 1 <= totalUserInTiers[_tier - 1],
-            "Tier max limit reached"
-        );
 
-        if (_tier == 1) whitelistTierOne.push(_address);
-        else if (_tier == 2) whitelistTierTwo.push(_address);
-        else if (_tier == 3) whitelistTierThree.push(_address);
-        else if (_tier == 4) whitelistTierFour.push(_address);
-        else if (_tier == 5) whitelistTierFive.push(_address);
-        else if (_tier == 6) whitelistTierSix.push(_address);
-        else if (_tier == 7) whitelistTierSeven.push(_address);
-        else if (_tier == 8) whitelistTierEight.push(_address);
-        else if (_tier == 9) whitelistTierNine.push(_address);
+        if (getWhitelist(_tier, _address))
+        {
+            revert("Already whitelisted");
+        }
+        else
+        {
+            require(
+                numberOfParticipants + 1 <= totalparticipants,
+                "Participants max limit reached"
+            );
+            require(
+                numberOfUserInTiers[_tier - 1] + 1 <= totalUserInTiers[_tier - 1],
+                "Tier max limit reached"
+            );
 
-        numberOfParticipants += 1;
-        numberOfUserInTiers[_tier - 1] += 1;
+            if (_tier == 1) whitelistTierOne.push(_address);
+            else if (_tier == 2) whitelistTierTwo.push(_address);
+            else if (_tier == 3) whitelistTierThree.push(_address);
+            else if (_tier == 4) whitelistTierFour.push(_address);
+            else if (_tier == 5) whitelistTierFive.push(_address);
+            else if (_tier == 6) whitelistTierSix.push(_address);
+            else if (_tier == 7) whitelistTierSeven.push(_address);
+            else if (_tier == 8) whitelistTierEight.push(_address);
+            else if (_tier == 9) whitelistTierNine.push(_address);
+
+            numberOfParticipants += 1;
+            numberOfUserInTiers[_tier - 1] += 1;
+        }
     }
 
     // check the address in whitelist tier
