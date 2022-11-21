@@ -374,11 +374,6 @@ contract SeedifyFundsContract is Ownable {
         return true;
     }
 
-    function setTokensPerBUSD(uint256 _tokensPerBUSD) external onlyOwner {
-        require(_tokensPerBUSD > 0, "Price should be greater than 0");
-        tokensPerBUSD = _tokensPerBUSD;
-    }
-
     function setRefundThresholdTime(uint256 _refundThresholdTime)
         external
         onlyOwner
