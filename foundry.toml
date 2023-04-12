@@ -1,0 +1,22 @@
+[profile.default]
+src = 'contracts'
+out = 'out'
+script = 'scripts'
+libs = ['lib', 'node_modules']
+solc_version = "0.8.17"
+gas_reports = ["*"]
+optimizer = true
+optimizer_runs = 20_000
+
+[profile.ci]
+verbosity = 4
+
+[rpc_endpoints]
+fantom-testnet = "https://rpc.ankr.com/fantom_testnet"
+mumbai = "${MUMBAI_RPC}"
+
+[etherscan]
+fantom-testnet = { key = "${FANTOM_KEY}" }
+mumbai = { key = "${POLYGON_KEY}" }
+
+# See more config options https://github.com/foundry-rs/foundry/tree/master/config
