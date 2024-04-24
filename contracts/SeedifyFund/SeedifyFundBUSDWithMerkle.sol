@@ -365,7 +365,7 @@ contract SeedifyLaunchpad is Ownable, Pausable {
         bytes32[] calldata proof
     ) external whenNotPaused _hasAllowance(msg.sender, amount) returns (bool) {
         require(
-            verify(msg.sender, userTier, block.chainid, proof, rootHash),
+            verify(msg.sender, userTier, proof, rootHash),
             "User not authenticated"
         );
         require(block.timestamp >= saleStart, "Sale not started yet");
@@ -411,18 +411,27 @@ contract SeedifyLaunchpad is Ownable, Pausable {
         _;
     }
 
+    /**
+     * @dev Function to verify the user's eligibility to participate in the sale using merkle tree
+     * @dev Merkle leaf should be keccak256(abi.encode(wallet, tier, chainId, saleContractAddress))
+     * @param _wallet Address of the user
+     * @param _tier Tier of the user
+     * @param proof Merkle proof of the user
+     * @param _rootHash Root hash of the merkle tree
+     */
     function verify(
         address _wallet,
         uint256 _tier,
-        uint256 _chainId,
         bytes32[] calldata proof,
         bytes32 _rootHash
-    ) public pure returns (bool) {
+    ) public view returns (bool) {
         return (
             MerkleProof.verify(
                 proof,
                 _rootHash,
-                keccak256(abi.encodePacked(_wallet, _tier, _chainId))
+                keccak256(
+                    abi.encode(_wallet, _tier, block.chainid, address(this))
+                )
             )
         );
     }
