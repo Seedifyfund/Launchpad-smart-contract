@@ -11,14 +11,15 @@ interface IERC20 {
 
     function balanceOf(address account) external view returns (uint256);
 
-    function transfer(address recipient, uint256 amount)
-        external
-        returns (bool);
+    function transfer(
+        address recipient,
+        uint256 amount
+    ) external returns (bool);
 
-    function allowance(address owner, address spender)
-        external
-        view
-        returns (uint256);
+    function allowance(
+        address owner,
+        address spender
+    ) external view returns (uint256);
 
     function approve(address spender, uint256 amount) external returns (bool);
 
@@ -128,11 +129,7 @@ abstract contract Ownable is Context {
 }
 
 library SafeERC20 {
-    function safeTransfer(
-        IERC20 token,
-        address to,
-        uint256 value
-    ) internal {
+    function safeTransfer(IERC20 token, address to, uint256 value) internal {
         require(token.transfer(to, value));
     }
 
@@ -199,11 +196,10 @@ library MerkleProof {
         return processProof(proof, leaf) == root;
     }
 
-    function processProof(bytes32[] memory proof, bytes32 leaf)
-        internal
-        pure
-        returns (bytes32)
-    {
+    function processProof(
+        bytes32[] memory proof,
+        bytes32 leaf
+    ) internal pure returns (bytes32) {
         bytes32 computedHash = leaf;
         for (uint256 i = 0; i < proof.length; i++) {
             bytes32 proofElement = proof[i];
@@ -218,11 +214,10 @@ library MerkleProof {
         return computedHash;
     }
 
-    function _efficientHash(bytes32 a, bytes32 b)
-        private
-        pure
-        returns (bytes32 value)
-    {
+    function _efficientHash(
+        bytes32 a,
+        bytes32 b
+    ) private pure returns (bytes32 value) {
         assembly {
             mstore(0x00, a)
             mstore(0x20, b)
@@ -364,13 +359,15 @@ contract SeedifyLaunchpad is Ownable, Pausable {
         rootHash = _hash;
     }
 
-    function buyTokens(uint256 amount, uint256 userTier, bytes32[] calldata proof)
-        external
-        whenNotPaused
-        _hasAllowance(msg.sender, amount)
-        returns (bool)
-    {
-        require(verify(msg.sender, userTier, proof, rootHash),"User not authenticated" );
+    function buyTokens(
+        uint256 amount,
+        uint256 userTier,
+        bytes32[] calldata proof
+    ) external whenNotPaused _hasAllowance(msg.sender, amount) returns (bool) {
+        require(
+            verify(msg.sender, userTier, proof, rootHash),
+            "User not authenticated"
+        );
         require(block.timestamp >= saleStart, "Sale not started yet");
         require(block.timestamp <= saleEnd, "Sale Ended");
         require(
@@ -414,17 +411,27 @@ contract SeedifyLaunchpad is Ownable, Pausable {
         _;
     }
 
+    /**
+     * @dev Function to verify the user's eligibility to participate in the sale using merkle tree
+     * @dev Merkle leaf should be keccak256(abi.encode(wallet, tier, chainId, saleContractAddress))
+     * @param _wallet Address of the user
+     * @param _tier Tier of the user
+     * @param proof Merkle proof of the user
+     * @param _rootHash Root hash of the merkle tree
+     */
     function verify(
         address _wallet,
         uint256 _tier,
         bytes32[] calldata proof,
         bytes32 _rootHash
-    ) public pure returns (bool) {
+    ) public view returns (bool) {
         return (
             MerkleProof.verify(
                 proof,
                 _rootHash,
-                keccak256(abi.encodePacked(_wallet, _tier))
+                keccak256(
+                    abi.encode(_wallet, _tier, block.chainid, address(this))
+                )
             )
         );
     }
